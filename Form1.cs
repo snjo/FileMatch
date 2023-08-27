@@ -43,7 +43,7 @@ namespace FileMatch
                 fileList.Add(new FileListing(file, file));
             }
 
-            if (listView1.Items.Count > 0 && listView2.Items.Count > 0)
+            /*if (listView1.Items.Count > 0 && listView2.Items.Count > 0)
             {
                 CompareLists();
             }
@@ -54,6 +54,12 @@ namespace FileMatch
                     ListViewItem lvi = listView.Items.Add(file.FileName);
                     lvi.Tag = file.FullPath;
                 }
+            }*/
+
+            foreach (FileListing file in fileList)
+            {
+                ListViewItem lvi = listView.Items.Add(file.FileName);
+                lvi.Tag = file.FullPath;
             }
         }
 
@@ -301,6 +307,16 @@ namespace FileMatch
         private void button1_MouseLeave(object sender, EventArgs e)
         {
             listView1.BackColor = Color.White;
+        }
+
+        private void button2_MouseEnter(object sender, EventArgs e)
+        {
+            listView2.BackColor = Color.Yellow;
+        }
+
+        private void button2_MouseLeave(object sender, EventArgs e)
+        {
+            listView2.BackColor = Color.White;
         }
     }
 }

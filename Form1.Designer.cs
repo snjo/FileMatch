@@ -92,7 +92,7 @@
             // 
             // buttonSelectFolder2
             // 
-            buttonSelectFolder2.Location = new Point(283, 12);
+            buttonSelectFolder2.Location = new Point(319, 12);
             buttonSelectFolder2.Name = "buttonSelectFolder2";
             buttonSelectFolder2.Size = new Size(107, 23);
             buttonSelectFolder2.TabIndex = 2;
@@ -183,6 +183,8 @@
             button2.Text = "Delete Selected";
             button2.UseVisualStyleBackColor = true;
             button2.Click += buttonDeletFiles2_Click;
+            button2.MouseEnter += button2_MouseEnter;
+            button2.MouseLeave += button2_MouseLeave;
             // 
             // Form1
             // 
