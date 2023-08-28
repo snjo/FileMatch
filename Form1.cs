@@ -3,6 +3,7 @@ using System;
 using System.Drawing.Imaging;
 using System.Numerics;
 using System.Windows.Forms;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace FileMatch
 {
@@ -47,25 +48,13 @@ namespace FileMatch
                 fileList.Add(new FileListing(file, file));
             }
 
-            /*if (listView1.Items.Count > 0 && listView2.Items.Count > 0)
-            {
-                CompareLists();
-            }
-            else
-            {
-                foreach (FileListing file in fileList)
-                {
-                    ListViewItem lvi = listView.Items.Add(file.FileName);
-                    lvi.Tag = file.FullPath;
-                }
-            }*/
-
             foreach (FileListing file in fileList)
             {
                 ListViewItem lvi = listView.Items.Add(file.FileName);
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
-                lvi.Tag = file.FullPath;
+                //lvi.Tag = file.FullPath;
+                lvi.Tag = file;
             }
         }
 
@@ -81,22 +70,27 @@ namespace FileMatch
 
             foreach (string uniqueName in fileNamesNoExt)
             {
-                AddLines(newList1, uniqueName, files1);
+                AddLines(newList1, uniqueName, files1);//AddLines(newList1, uniqueName, files1);
                 AddLines(newList2, uniqueName, files2);
             }
 
             listView1.Items.Clear();
             listView2.Items.Clear();
 
+            ListView lvx = new ListView();
+
+            ListViewAddItems(newList1, listView1);
+            ListViewAddItems(newList1, listView2);
+        }
+
+        private static void ListViewAddItems(List<FileListing> newList1, ListView listView)
+        {
             foreach (FileListing fileListing in newList1)
             {
-                ListViewItem lvi = listView1.Items.Add(fileListing.FileName);
-                lvi.Tag = fileListing.FullPath;
-            }
-            foreach (FileListing fileListing in newList2)
-            {
-                ListViewItem lvi = listView2.Items.Add(fileListing.FileName);
-                lvi.Tag = fileListing.FullPath;
+                ListViewItem lvi = listView.Items.Add(fileListing.DisplayName);
+                lvi.SubItems.Add(string.Empty);
+                lvi.SubItems.Add(string.Empty);
+                lvi.Tag = fileListing;//.FullPath;
             }
         }
 
@@ -105,7 +99,7 @@ namespace FileMatch
             FileListing fileListing = null;
             foreach (FileListing file in list)
             {
-                if (file.GetFileNameWithoutExtension() == uniqueName)
+                if (file.FileNameWithoutExtension == uniqueName)
                 {
                     fileListing = file;
                     break;
@@ -117,7 +111,7 @@ namespace FileMatch
             }
             else
             {
-                newList.Add(new FileListing("...", "..."));
+                newList.Add(new FileListing(true, "..."));
             }
         }
 
@@ -125,7 +119,7 @@ namespace FileMatch
         {
             foreach (FileListing file in lv)
             {
-                string fileNameWithoutExtension = file.GetFileNameWithoutExtension();
+                string fileNameWithoutExtension = file.FileNameWithoutExtension;
                 if (!fileNamesNoExt.Contains(fileNameWithoutExtension))
                 {
                     fileNamesNoExt.Add(fileNameWithoutExtension);
@@ -214,15 +208,15 @@ namespace FileMatch
 
                 if (selected.Tag != null)
                 {
-                    string fileName = selected.Tag.ToString();
+                    //string fileName = selected.Tag.ToString();
+                    string fileName = (selected.Tag as FileListing).FullPath;
                     if (!File.Exists(fileName))
                     {
-                        MessageBox.Show("Can't locate file " + selected.Tag.ToString());
+                        MessageBox.Show("Can't locate file " + fileName);
                         return;
                     }
                     try
                     {
-                        //MessageBox.Show("Deleting file " + selected.Tag.ToString());
                         File.Delete(fileName);
                         deleted = true;
                     }
@@ -257,7 +251,8 @@ namespace FileMatch
                 ListViewItem selected = listView.SelectedItems[0];
                 if (selected.Tag != null)
                 {
-                    string fileName = selected.Tag.ToString();
+                    //string fileName = selected.Tag.ToString();
+                    string fileName = (selected.Tag as FileListing).FullPath;
                     if (File.Exists(fileName))
                     {
                         string extension = Path.GetExtension(fileName).ToLower();
@@ -556,14 +551,35 @@ namespace FileMatch
 
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            SelectItemHighlightMatches(listView1, listView2);
+            //SelectItemHighlightMatches(listView1, listView2);
+            StartMatchingTimer(listView1, listView2);
         }
 
         private void listView2_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            SelectItemHighlightMatches(listView2, listView1);
+            StartMatchingTimer(listView2, listView1);
         }
 
+        private void StartMatchingTimer(ListView lv1, ListView lv2)
+        {
+            if (!markMatchStarted)
+            {
+                markMatchStarted = true;
+                timerMarkMatches.Start();
+                matchList1 = lv1;
+                matchList2 = lv2;
+            }
+        }
+
+        private bool markMatchStarted = false;
+        private ListView matchList1;
+        private ListView matchList2;
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            markMatchStarted = false;
+            timerMarkMatches.Stop();
+            SelectItemHighlightMatches(matchList1, matchList2);
+        }
 
         private void SelectItemHighlightMatches(ListView lv1, ListView lv2)
         {
@@ -573,30 +589,52 @@ namespace FileMatch
                 ClearSubItem(lv1, 2);
                 ClearSubItem(lv2, 2);
                 int selectNumber = 1;
+
+                int testLoop0 = 0;
+                int testLoop1 = 0;
+                int testLoop2 = 0;
+                int testFound = 0;
+                int testEmpty = 0;
+
                 foreach (ListViewItem item1 in lv1.SelectedItems)
                 {
+                    testLoop0++;
                     if (item1.SubItems.Count < 2) item1.SubItems.Add("");
                     if (item1.SubItems.Count < 3) item1.SubItems.Add("");
-                    string name1 = Path.GetFileNameWithoutExtension(item1.Tag.ToString());
+                    //string name1 = Path.GetFileNameWithoutExtension(item1.Tag.ToString());
+                    string name1 = (item1.Tag as FileListing).FileNameWithoutExtension;
+
+
 
                     foreach (ListViewItem item2 in lv2.Items)
                     {
-                        if (item1.Text != "...")
+                        testLoop1++;
+                        //if (item1.Text != "...")
+                        if (!(item1.Tag as FileListing).Empty)
                         {
-                            string name2 = Path.GetFileNameWithoutExtension(item2.Tag.ToString());
-                            if (item2.SubItems.Count < 2) item2.SubItems.Add(string.Empty);
-                            if (item2.SubItems.Count < 3) item2.SubItems.Add(string.Empty);
+                            testLoop2++;
+                            string name2 = (item2.Tag as FileListing).FileNameWithoutExtension;
                             if (name1 == name2)
                             {
+                                testFound++;
                                 item1.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B9C";
                                 item2.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B05";
                                 selectNumber++;
                                 break;
                             }
+
+                        }
+                        else
+                        {
+                            testEmpty++;
                         }
                     }
 
+
                 }
+
+                //check performance of foreach loops
+                //MessageBox.Show("loop0: " + testLoop0 + Environment.NewLine + "loop1: " + testLoop1 + Environment.NewLine + "loop2: " + testLoop2 + Environment.NewLine + "Found: " + testLoop2 + Environment.NewLine + "Empty: " + testLoop2 + Environment.NewLine);
             }
             else
             {

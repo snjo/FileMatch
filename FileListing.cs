@@ -13,7 +13,8 @@ namespace FileMatch
     {
         public string Folder = string.Empty;
         public string FileName = string.Empty;
-        public string DisplayName = string.Empty;
+        private string _displayName = string.Empty;
+        public string FileNameWithoutExtension = string.Empty;
         public Bitmap Thumbnail;
         public Bitmap Picture;
         public bool Empty = true;
@@ -21,16 +22,17 @@ namespace FileMatch
 
         public FileListing() { }
 
-        public FileListing(bool empty)
+        public FileListing(bool empty, string displayName = "")
         {
             Empty = empty;
+            DisplayName = displayName;
         }
 
         public FileListing(string filePath, string displayName)
         {
             Folder = Path.GetDirectoryName(filePath);
             FileName = Path.GetFileName(filePath);
-            //SetDisplayName(displayName);
+            FileNameWithoutExtension = Path.GetFileNameWithoutExtension(FileName);
             Empty = false;
         }
 
@@ -39,7 +41,7 @@ namespace FileMatch
             Folder = folder;
             FileName = fileName;
             DisplayName = displayName;
-            //SetDisplayName(displayName);
+            FileNameWithoutExtension = Path.GetFileNameWithoutExtension(FileName);
             Empty = false;
         }
 
@@ -54,6 +56,21 @@ namespace FileMatch
                 DisplayName = displayName;
             }
         }*/
+
+        public string DisplayName
+        {
+            get 
+            {
+                if (_displayName == string.Empty)
+                    _displayName = FileName;
+                
+                return _displayName;
+            }
+            set
+            { 
+                _displayName = value; 
+            }
+        }
 
         public string Extension
         {
@@ -73,10 +90,10 @@ namespace FileMatch
             }            
         }
 
-        public string GetFileNameWithoutExtension()
+        /*public string GetFileNameWithoutExtension()
         {
             return Path.GetFileNameWithoutExtension(FileName);
-        }
+        }*/
 
         public bool FileExists()
         {

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             buttonSelectFolder1 = new Button();
             listView1 = new ListView();
             ColumnFile1 = new ColumnHeader();
@@ -56,6 +57,7 @@
             ColumnDeleted2 = new ColumnHeader();
             ColumnMatch2 = new ColumnHeader();
             checkBoxMarkMatches = new CheckBox();
+            timerMarkMatches = new System.Windows.Forms.Timer(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelForPicture.SuspendLayout();
             SuspendLayout();
@@ -316,6 +318,10 @@
             checkBoxMarkMatches.UseVisualStyleBackColor = true;
             checkBoxMarkMatches.CheckedChanged += checkBoxMarkMatches_CheckedChanged;
             // 
+            // timerMarkMatches
+            // 
+            timerMarkMatches.Tick += timer1_Tick;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -379,5 +385,6 @@
         private ColumnHeader ColumnDeleted2;
         private ColumnHeader ColumnMatch2;
         private CheckBox checkBoxMarkMatches;
+        private System.Windows.Forms.Timer timerMarkMatches;
     }
 }
