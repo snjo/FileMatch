@@ -36,28 +36,27 @@
             ColumnMatch1 = new ColumnHeader();
             buttonSelectFolder2 = new Button();
             pictureBox1 = new PictureBox();
-            button1 = new Button();
+            buttonDelete1 = new Button();
             folderBrowserDialog1 = new FolderBrowserDialog();
             buttonCompare = new Button();
             buttonScrollToTop = new Button();
             button3 = new Button();
             button4 = new Button();
             button5 = new Button();
-            button2 = new Button();
+            buttonDelete2 = new Button();
             panelForPicture = new Panel();
             buttonZoom100 = new Button();
             buttonZoomFit = new Button();
             buttonZoomPlus = new Button();
             buttonZoomMinus = new Button();
-            labelOffsetX = new Label();
-            labelOffsetY = new Label();
-            labelTest = new Label();
             listView2 = new ListView();
             ColumnFile2 = new ColumnHeader();
             ColumnDeleted2 = new ColumnHeader();
             ColumnMatch2 = new ColumnHeader();
             checkBoxMarkMatches = new CheckBox();
             timerMarkMatches = new System.Windows.Forms.Timer(components);
+            labelZoom = new Label();
+            checkBoxLoadPictureOnSingleClick = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelForPicture.SuspendLayout();
             SuspendLayout();
@@ -83,7 +82,9 @@
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
             listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
+            listView1.Click += listView_Click;
             listView1.DoubleClick += DisplayPicture;
+            listView1.KeyUp += listView_KeyUp;
             // 
             // ColumnFile1
             // 
@@ -124,18 +125,18 @@
             pictureBox1.MouseMove += pictureBox1_MouseMove;
             pictureBox1.MouseUp += pictureBox1_MouseUp;
             // 
-            // button1
+            // buttonDelete1
             // 
-            button1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            button1.Location = new Point(170, 661);
-            button1.Name = "button1";
-            button1.Size = new Size(107, 23);
-            button1.TabIndex = 5;
-            button1.Text = "Delete Selected";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += buttonDeletFiles1_Click;
-            button1.MouseEnter += button1_MouseEnter;
-            button1.MouseLeave += button1_MouseLeave;
+            buttonDelete1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonDelete1.Location = new Point(170, 661);
+            buttonDelete1.Name = "buttonDelete1";
+            buttonDelete1.Size = new Size(107, 23);
+            buttonDelete1.TabIndex = 5;
+            buttonDelete1.Text = "Delete Selected";
+            buttonDelete1.UseVisualStyleBackColor = true;
+            buttonDelete1.Click += buttonDeletFiles1_Click;
+            buttonDelete1.MouseEnter += buttonDelete1_MouseEnter;
+            buttonDelete1.MouseLeave += buttonDelete1_MouseLeave;
             // 
             // buttonCompare
             // 
@@ -188,18 +189,18 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += buttonScrollDownMore;
             // 
-            // button2
+            // buttonDelete2
             // 
-            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            button2.Location = new Point(477, 661);
-            button2.Name = "button2";
-            button2.Size = new Size(107, 23);
-            button2.TabIndex = 13;
-            button2.Text = "Delete Selected";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += buttonDeletFiles2_Click;
-            button2.MouseEnter += button2_MouseEnter;
-            button2.MouseLeave += button2_MouseLeave;
+            buttonDelete2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonDelete2.Location = new Point(477, 661);
+            buttonDelete2.Name = "buttonDelete2";
+            buttonDelete2.Size = new Size(107, 23);
+            buttonDelete2.TabIndex = 13;
+            buttonDelete2.Text = "Delete Selected";
+            buttonDelete2.UseVisualStyleBackColor = true;
+            buttonDelete2.Click += buttonDeletFiles2_Click;
+            buttonDelete2.MouseEnter += buttonDelete2_MouseEnter;
+            buttonDelete2.MouseLeave += buttonDelete2_MouseLeave;
             // 
             // panelForPicture
             // 
@@ -252,33 +253,6 @@
             buttonZoomMinus.UseVisualStyleBackColor = true;
             buttonZoomMinus.Click += buttonZoomMinus_Click;
             // 
-            // labelOffsetX
-            // 
-            labelOffsetX.AutoSize = true;
-            labelOffsetX.Location = new Point(808, 16);
-            labelOffsetX.Name = "labelOffsetX";
-            labelOffsetX.Size = new Size(20, 15);
-            labelOffsetX.TabIndex = 19;
-            labelOffsetX.Text = "X: ";
-            // 
-            // labelOffsetY
-            // 
-            labelOffsetY.AutoSize = true;
-            labelOffsetY.Location = new Point(887, 16);
-            labelOffsetY.Name = "labelOffsetY";
-            labelOffsetY.Size = new Size(20, 15);
-            labelOffsetY.TabIndex = 20;
-            labelOffsetY.Text = "Y: ";
-            // 
-            // labelTest
-            // 
-            labelTest.AutoSize = true;
-            labelTest.Location = new Point(1063, 16);
-            labelTest.Name = "labelTest";
-            labelTest.Size = new Size(38, 15);
-            labelTest.TabIndex = 21;
-            labelTest.Text = "label1";
-            // 
             // listView2
             // 
             listView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -289,7 +263,8 @@
             listView2.TabIndex = 22;
             listView2.UseCompatibleStateImageBehavior = false;
             listView2.View = View.Details;
-            listView2.ItemSelectionChanged += listView2_ItemSelectionChanged;
+            listView2.ItemSelectionChanged += listView1_ItemSelectionChanged;
+            listView2.Click += listView_Click;
             listView2.DoubleClick += DisplayPicture;
             // 
             // ColumnFile2
@@ -325,28 +300,48 @@
             // 
             timerMarkMatches.Tick += timer1_Tick;
             // 
+            // labelZoom
+            // 
+            labelZoom.AutoSize = true;
+            labelZoom.Location = new Point(798, 16);
+            labelZoom.Name = "labelZoom";
+            labelZoom.Size = new Size(39, 15);
+            labelZoom.TabIndex = 21;
+            labelZoom.Text = "Zoom";
+            // 
+            // checkBoxLoadPictureOnSingleClick
+            // 
+            checkBoxLoadPictureOnSingleClick.AutoSize = true;
+            checkBoxLoadPictureOnSingleClick.Checked = true;
+            checkBoxLoadPictureOnSingleClick.CheckState = CheckState.Checked;
+            checkBoxLoadPictureOnSingleClick.Location = new Point(593, 664);
+            checkBoxLoadPictureOnSingleClick.Name = "checkBoxLoadPictureOnSingleClick";
+            checkBoxLoadPictureOnSingleClick.Size = new Size(231, 19);
+            checkBoxLoadPictureOnSingleClick.TabIndex = 24;
+            checkBoxLoadPictureOnSingleClick.Text = "Load pictures on single click / keypress";
+            checkBoxLoadPictureOnSingleClick.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1376, 696);
+            Controls.Add(checkBoxLoadPictureOnSingleClick);
             Controls.Add(checkBoxMarkMatches);
             Controls.Add(listView2);
-            Controls.Add(labelTest);
-            Controls.Add(labelOffsetY);
-            Controls.Add(labelOffsetX);
+            Controls.Add(labelZoom);
             Controls.Add(buttonZoomMinus);
             Controls.Add(buttonZoomPlus);
             Controls.Add(buttonZoomFit);
             Controls.Add(buttonZoom100);
             Controls.Add(panelForPicture);
-            Controls.Add(button2);
+            Controls.Add(buttonDelete2);
             Controls.Add(button5);
             Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(buttonScrollToTop);
             Controls.Add(buttonCompare);
-            Controls.Add(button1);
+            Controls.Add(buttonDelete1);
             Controls.Add(buttonSelectFolder2);
             Controls.Add(listView1);
             Controls.Add(buttonSelectFolder1);
@@ -364,7 +359,7 @@
         private ListView listView1;
         private Button buttonSelectFolder2;
         private PictureBox pictureBox1;
-        private Button button1;
+        private Button buttonDelete1;
         private FolderBrowserDialog folderBrowserDialog1;
         private Button buttonCompare;
         private ColumnHeader ColumnFile1;
@@ -372,15 +367,12 @@
         private Button button3;
         private Button button4;
         private Button button5;
-        private Button button2;
+        private Button buttonDelete2;
         private Panel panelForPicture;
         private Button buttonZoom100;
         private Button buttonZoomFit;
         private Button buttonZoomPlus;
         private Button buttonZoomMinus;
-        private Label labelOffsetX;
-        private Label labelOffsetY;
-        private Label labelTest;
         private ColumnHeader ColumnDeleted1;
         private ColumnHeader ColumnMatch1;
         private ListView listView2;
@@ -389,5 +381,7 @@
         private ColumnHeader ColumnMatch2;
         private CheckBox checkBoxMarkMatches;
         private System.Windows.Forms.Timer timerMarkMatches;
+        private Label labelZoom;
+        private CheckBox checkBoxLoadPictureOnSingleClick;
     }
 }

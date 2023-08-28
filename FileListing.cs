@@ -45,18 +45,6 @@ namespace FileMatch
             Empty = false;
         }
 
-        /*private void SetDisplayName(string displayName)
-        {
-            if (displayName == "")
-            {
-                DisplayName = FileName;
-            }
-            else
-            {
-                DisplayName = displayName;
-            }
-        }*/
-
         public string DisplayName
         {
             get 
@@ -84,16 +72,9 @@ namespace FileMatch
         {
             get
             {
-                //string folder = Path.GetDirectoryName(Folder); // removes trailing backslashes
-                //return folder + "\\" + FileName;
                 return Folder + "\\" + FileName;
             }            
         }
-
-        /*public string GetFileNameWithoutExtension()
-        {
-            return Path.GetFileNameWithoutExtension(FileName);
-        }*/
 
         public bool FileExists()
         {

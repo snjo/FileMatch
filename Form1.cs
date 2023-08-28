@@ -197,7 +197,13 @@ namespace FileMatch
 
         private void DeleteFiles(ListView listView)
         {
-            DialogResult confirmDelete = MessageBox.Show("Delete files?", "Are you sure?", MessageBoxButtons.OKCancel);
+            if (listView.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("No files selected in this column", "Delete files");
+                return;
+            }
+
+            DialogResult confirmDelete = MessageBox.Show("Delete " + listView.SelectedItems.Count + " files?", "Delete files", MessageBoxButtons.OKCancel);
             if (confirmDelete != DialogResult.OK) return;
             foreach (ListViewItem selected in listView.SelectedItems)
             {
@@ -311,22 +317,22 @@ namespace FileMatch
             }
         }
 
-        private void button1_MouseEnter(object sender, EventArgs e)
+        private void buttonDelete1_MouseEnter(object sender, EventArgs e)
         {
             listView1.BackColor = Color.Yellow;
         }
 
-        private void button1_MouseLeave(object sender, EventArgs e)
+        private void buttonDelete1_MouseLeave(object sender, EventArgs e)
         {
             listView1.BackColor = Color.White;
         }
 
-        private void button2_MouseEnter(object sender, EventArgs e)
+        private void buttonDelete2_MouseEnter(object sender, EventArgs e)
         {
             listView2.BackColor = Color.Yellow;
         }
 
-        private void button2_MouseLeave(object sender, EventArgs e)
+        private void buttonDelete2_MouseLeave(object sender, EventArgs e)
         {
             listView2.BackColor = Color.White;
         }
@@ -430,7 +436,7 @@ namespace FileMatch
             pictureBox1.Top = (int)pictureBoxLocation.Y;
 
 
-            labelTest.Text = "PBL: " + pictureBoxLocation + "    zoom: " + zoom + " pfp: " + pictureFocusPoint;
+            labelZoom.Text = "Zoom: " + Math.Round(zoom * 100f) + "%";
 
             int minLeft = -(pictureBox1.Width - panelForPicture.Width);
             int maxLeft = 0;
@@ -465,23 +471,14 @@ namespace FileMatch
 
             Vector2 centerOffset = (pictureCenter - panelHalf);
 
-            //Vector2 pictureOffset = pictureHalf + picturePos;
-
             pictureFocusPoint = centerOffset / pictureSize;
 
-            labelOffsetX.Text = "X: " + pictureFocusPoint.X;
-            labelOffsetY.Text = "Y: " + pictureFocusPoint.Y + ", " + centerOffset;
-
-            //Vector2 offset = panelCenter - pictureOffset;
-            //pictureFocusPoint = offset;// * currentZoom;
         }
 
         private void PictureZoomFit()
         {
             float zoomFitX = (float)panelForPicture.Width / (float)pictureBox1.Image.Width;
             float zoomFitY = (float)panelForPicture.Height / (float)pictureBox1.Image.Height;
-
-            //labelTest.Text = zoomFitX + " " + zoomFitY + " from " + panelForPicture.Width + "/" + pictureBox1.Image.Width;
 
             pictureBox1.Left = 0;
             pictureBox1.Top = 0;
@@ -549,6 +546,7 @@ namespace FileMatch
         }
         #endregion -------------------------------------------------------------------------------------
 
+        #region File Match -------------------------------------------------------------------------------
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             //SelectItemHighlightMatches(listView1, listView2);
@@ -590,15 +588,8 @@ namespace FileMatch
                 ClearSubItem(lv2, 2);
                 int selectNumber = 1;
 
-                int testLoop0 = 0;
-                int testLoop1 = 0;
-                int testLoop2 = 0;
-                int testFound = 0;
-                int testEmpty = 0;
-
                 foreach (ListViewItem item1 in lv1.SelectedItems)
                 {
-                    testLoop0++;
                     if (item1.SubItems.Count < 2) item1.SubItems.Add("");
                     if (item1.SubItems.Count < 3) item1.SubItems.Add("");
                     //string name1 = Path.GetFileNameWithoutExtension(item1.Tag.ToString());
@@ -608,15 +599,12 @@ namespace FileMatch
 
                     foreach (ListViewItem item2 in lv2.Items)
                     {
-                        testLoop1++;
                         //if (item1.Text != "...")
                         if (!(item1.Tag as FileListing).Empty)
                         {
-                            testLoop2++;
                             string name2 = (item2.Tag as FileListing).FileNameWithoutExtension;
                             if (name1 == name2)
                             {
-                                testFound++;
                                 item1.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B9C";
                                 item2.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B05";
                                 selectNumber++;
@@ -624,21 +612,10 @@ namespace FileMatch
                             }
 
                         }
-                        else
-                        {
-                            testEmpty++;
-                        }
                     }
 
 
                 }
-
-                //check performance of foreach loops
-                //MessageBox.Show("loop0: " + testLoop0 + Environment.NewLine + "loop1: " + testLoop1 + Environment.NewLine + "loop2: " + testLoop2 + Environment.NewLine + "Found: " + testLoop2 + Environment.NewLine + "Empty: " + testLoop2 + Environment.NewLine);
-            }
-            else
-            {
-                //clear highlight on lv2
             }
         }
 
@@ -657,6 +634,23 @@ namespace FileMatch
             ClearSubItem(listView1 as ListView, 2);
             ClearSubItem(listView2 as ListView, 1);
             ClearSubItem(listView2 as ListView, 2);
+        }
+        #endregion -------------------------------------------------------------------------
+
+        private void listView_Click(object sender, EventArgs e)
+        {
+            if (checkBoxLoadPictureOnSingleClick.Checked)
+            {
+                DisplayPicture(sender, e);
+            }
+        }
+
+        private void listView_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (checkBoxLoadPictureOnSingleClick.Checked)
+            {
+                DisplayPicture(sender, e);
+            }
         }
     }
 }
