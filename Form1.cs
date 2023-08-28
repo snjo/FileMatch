@@ -63,6 +63,8 @@ namespace FileMatch
             foreach (FileListing file in fileList)
             {
                 ListViewItem lvi = listView.Items.Add(file.FileName);
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add("");
                 lvi.Tag = file.FullPath;
             }
         }
@@ -235,6 +237,9 @@ namespace FileMatch
                 {
                     selected.BackColor = Color.LightPink;
                     selected.ForeColor = Color.DarkRed;
+                    if (selected.SubItems[1] == null) selected.SubItems.Add("");
+                    if (selected.SubItems[2] == null) selected.SubItems.Add("");
+                    selected.SubItems[1].Text = "DEL";
                 }
 
                 if (error)
@@ -332,7 +337,7 @@ namespace FileMatch
         }
 
 
-#region Drag Picture
+        #region Drag Picture -------------------------------------------------------------------------------------
         Vector2 pictureFocusPoint = new Vector2(0f, 0f);
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -476,16 +481,6 @@ namespace FileMatch
             //pictureFocusPoint = offset;// * currentZoom;
         }
 
-        private void buttonZoom100_Click(object sender, EventArgs e)
-        {
-            PictureZoom(1f);
-        }
-
-        private void buttonZoomFit_Click(object sender, EventArgs e)
-        {
-            PictureZoomFit();
-        }
-
         private void PictureZoomFit()
         {
             float zoomFitX = (float)panelForPicture.Width / (float)pictureBox1.Image.Width;
@@ -499,11 +494,6 @@ namespace FileMatch
             PictureZoom(Math.Min(zoomFitX, zoomFitY)); // bugged, sends 0f
 
             //PictureZoom(0.01f);
-        }
-
-        private void buttonZoomPlus_Click(object sender, EventArgs e)
-        {
-            ZoomPlus();
         }
 
         private void ZoomPlus()
@@ -521,11 +511,6 @@ namespace FileMatch
             if (currentZoom > 4f) currentZoom = 4f;
 
             PictureZoom(currentZoom);
-        }
-
-        private void buttonZoomMinus_Click(object sender, EventArgs e)
-        {
-            ZoomMinus();
         }
 
         private void ZoomMinus()
@@ -547,7 +532,93 @@ namespace FileMatch
             }
             PictureZoom(currentZoom);
         }
+
+        private void buttonZoomPlus_Click(object sender, EventArgs e)
+        {
+            ZoomPlus();
+        }
+
+        private void buttonZoomMinus_Click(object sender, EventArgs e)
+        {
+            ZoomMinus();
+        }
+
+        private void buttonZoom100_Click(object sender, EventArgs e)
+        {
+            PictureZoom(1f);
+        }
+
+        private void buttonZoomFit_Click(object sender, EventArgs e)
+        {
+            PictureZoomFit();
+        }
         #endregion -------------------------------------------------------------------------------------
 
+        private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            SelectItemHighlightMatches(listView1, listView2);
+        }
+
+        private void listView2_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            SelectItemHighlightMatches(listView2, listView1);
+        }
+
+
+        private void SelectItemHighlightMatches(ListView lv1, ListView lv2)
+        {
+            if (!checkBoxMarkMatches.Checked) return;
+            if (lv1.SelectedItems.Count > 0)
+            {
+                ClearSubItem(lv1, 2);
+                ClearSubItem(lv2, 2);
+                int selectNumber = 1;
+                foreach (ListViewItem item1 in lv1.SelectedItems)
+                {
+                    if (item1.SubItems.Count < 2) item1.SubItems.Add("");
+                    if (item1.SubItems.Count < 3) item1.SubItems.Add("");
+                    string name1 = Path.GetFileNameWithoutExtension(item1.Tag.ToString());
+
+                    foreach (ListViewItem item2 in lv2.Items)
+                    {
+                        if (item1.Text != "...")
+                        {
+                            string name2 = Path.GetFileNameWithoutExtension(item2.Tag.ToString());
+                            if (item2.SubItems.Count < 2) item2.SubItems.Add(string.Empty);
+                            if (item2.SubItems.Count < 3) item2.SubItems.Add(string.Empty);
+                            if (name1 == name2)
+                            {
+                                item1.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B9C";
+                                item2.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B05";
+                                selectNumber++;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                //clear highlight on lv2
+            }
+        }
+
+        private static void ClearSubItem(ListView lv1, int num)
+        {
+            foreach (ListViewItem lvi in lv1.Items) // clear old markings
+            {
+                if (lvi.SubItems.Count > num)
+                    lvi.SubItems[num].Text = "";
+            }
+        }
+
+        private void checkBoxMarkMatches_CheckedChanged(object sender, EventArgs e)
+        {
+            ClearSubItem(listView1 as ListView, 1);
+            ClearSubItem(listView1 as ListView, 2);
+            ClearSubItem(listView2 as ListView, 1);
+            ClearSubItem(listView2 as ListView, 2);
+        }
     }
 }

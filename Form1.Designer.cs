@@ -30,9 +30,9 @@
         {
             buttonSelectFolder1 = new Button();
             listView1 = new ListView();
-            ColumnHeader1 = new ColumnHeader();
-            listView2 = new ListView();
-            columnHeader2 = new ColumnHeader();
+            ColumnFile1 = new ColumnHeader();
+            ColumnDeleted1 = new ColumnHeader();
+            ColumnMatch1 = new ColumnHeader();
             buttonSelectFolder2 = new Button();
             pictureBox1 = new PictureBox();
             button1 = new Button();
@@ -51,6 +51,11 @@
             labelOffsetX = new Label();
             labelOffsetY = new Label();
             labelTest = new Label();
+            listView2 = new ListView();
+            ColumnFile2 = new ColumnHeader();
+            ColumnDeleted2 = new ColumnHeader();
+            ColumnMatch2 = new ColumnHeader();
+            checkBoxMarkMatches = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelForPicture.SuspendLayout();
             SuspendLayout();
@@ -68,36 +73,30 @@
             // listView1
             // 
             listView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            listView1.Columns.AddRange(new ColumnHeader[] { ColumnHeader1 });
+            listView1.Columns.AddRange(new ColumnHeader[] { ColumnFile1, ColumnDeleted1, ColumnMatch1 });
             listView1.Location = new Point(12, 41);
             listView1.Name = "listView1";
             listView1.Size = new Size(265, 614);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
+            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
             listView1.DoubleClick += DisplayPicture;
             // 
-            // ColumnHeader1
+            // ColumnFile1
             // 
-            ColumnHeader1.Text = "File Name";
-            ColumnHeader1.Width = 250;
+            ColumnFile1.Text = "File Name";
+            ColumnFile1.Width = 170;
             // 
-            // listView2
+            // ColumnDeleted1
             // 
-            listView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            listView2.Columns.AddRange(new ColumnHeader[] { columnHeader2 });
-            listView2.Location = new Point(319, 41);
-            listView2.Name = "listView2";
-            listView2.Size = new Size(265, 614);
-            listView2.TabIndex = 3;
-            listView2.UseCompatibleStateImageBehavior = false;
-            listView2.View = View.Details;
-            listView2.DoubleClick += DisplayPicture;
+            ColumnDeleted1.Text = "Del";
+            ColumnDeleted1.Width = 35;
             // 
-            // columnHeader2
+            // ColumnMatch1
             // 
-            columnHeader2.Text = "File Name";
-            columnHeader2.Width = 250;
+            ColumnMatch1.Text = "Match";
+            ColumnMatch1.Width = 55;
             // 
             // buttonSelectFolder2
             // 
@@ -278,11 +277,52 @@
             labelTest.TabIndex = 21;
             labelTest.Text = "label1";
             // 
+            // listView2
+            // 
+            listView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            listView2.Columns.AddRange(new ColumnHeader[] { ColumnFile2, ColumnDeleted2, ColumnMatch2 });
+            listView2.Location = new Point(319, 44);
+            listView2.Name = "listView2";
+            listView2.Size = new Size(265, 614);
+            listView2.TabIndex = 22;
+            listView2.UseCompatibleStateImageBehavior = false;
+            listView2.View = View.Details;
+            listView2.ItemSelectionChanged += listView2_ItemSelectionChanged;
+            listView2.DoubleClick += DisplayPicture;
+            // 
+            // ColumnFile2
+            // 
+            ColumnFile2.Text = "File Name";
+            ColumnFile2.Width = 170;
+            // 
+            // ColumnDeleted2
+            // 
+            ColumnDeleted2.Text = "Del";
+            ColumnDeleted2.Width = 35;
+            // 
+            // ColumnMatch2
+            // 
+            ColumnMatch2.Text = "Match";
+            ColumnMatch2.Width = 55;
+            // 
+            // checkBoxMarkMatches
+            // 
+            checkBoxMarkMatches.AutoSize = true;
+            checkBoxMarkMatches.Location = new Point(319, 664);
+            checkBoxMarkMatches.Name = "checkBoxMarkMatches";
+            checkBoxMarkMatches.Size = new Size(136, 19);
+            checkBoxMarkMatches.TabIndex = 23;
+            checkBoxMarkMatches.Text = "Mark matches (slow)";
+            checkBoxMarkMatches.UseVisualStyleBackColor = true;
+            checkBoxMarkMatches.CheckedChanged += checkBoxMarkMatches_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1376, 696);
+            Controls.Add(checkBoxMarkMatches);
+            Controls.Add(listView2);
             Controls.Add(labelTest);
             Controls.Add(labelOffsetY);
             Controls.Add(labelOffsetX);
@@ -298,7 +338,6 @@
             Controls.Add(buttonScrollToTop);
             Controls.Add(buttonCompare);
             Controls.Add(button1);
-            Controls.Add(listView2);
             Controls.Add(buttonSelectFolder2);
             Controls.Add(listView1);
             Controls.Add(buttonSelectFolder1);
@@ -314,14 +353,12 @@
 
         private Button buttonSelectFolder1;
         private ListView listView1;
-        private ListView listView2;
         private Button buttonSelectFolder2;
         private PictureBox pictureBox1;
         private Button button1;
         private FolderBrowserDialog folderBrowserDialog1;
         private Button buttonCompare;
-        private ColumnHeader ColumnHeader1;
-        private ColumnHeader columnHeader2;
+        private ColumnHeader ColumnFile1;
         private Button buttonScrollToTop;
         private Button button3;
         private Button button4;
@@ -335,5 +372,12 @@
         private Label labelOffsetX;
         private Label labelOffsetY;
         private Label labelTest;
+        private ColumnHeader ColumnDeleted1;
+        private ColumnHeader ColumnMatch1;
+        private ListView listView2;
+        private ColumnHeader ColumnFile2;
+        private ColumnHeader ColumnDeleted2;
+        private ColumnHeader ColumnMatch2;
+        private CheckBox checkBoxMarkMatches;
     }
 }

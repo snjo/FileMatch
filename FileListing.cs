@@ -17,6 +17,7 @@ namespace FileMatch
         public Bitmap Thumbnail;
         public Bitmap Picture;
         public bool Empty = true;
+        public bool Deleted = false;
 
         public FileListing() { }
 
