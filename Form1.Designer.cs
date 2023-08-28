@@ -309,12 +309,15 @@
             // 
             // checkBoxMarkMatches
             // 
+            checkBoxMarkMatches.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             checkBoxMarkMatches.AutoSize = true;
+            checkBoxMarkMatches.Checked = true;
+            checkBoxMarkMatches.CheckState = CheckState.Checked;
             checkBoxMarkMatches.Location = new Point(319, 664);
             checkBoxMarkMatches.Name = "checkBoxMarkMatches";
-            checkBoxMarkMatches.Size = new Size(136, 19);
+            checkBoxMarkMatches.Size = new Size(101, 19);
             checkBoxMarkMatches.TabIndex = 23;
-            checkBoxMarkMatches.Text = "Mark matches (slow)";
+            checkBoxMarkMatches.Text = "Mark matches";
             checkBoxMarkMatches.UseVisualStyleBackColor = true;
             checkBoxMarkMatches.CheckedChanged += checkBoxMarkMatches_CheckedChanged;
             // 

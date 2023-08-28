@@ -80,7 +80,7 @@ namespace FileMatch
             ListView lvx = new ListView();
 
             ListViewAddItems(newList1, listView1);
-            ListViewAddItems(newList1, listView2);
+            ListViewAddItems(newList2, listView2);
         }
 
         private static void ListViewAddItems(List<FileListing> newList1, ListView listView)
