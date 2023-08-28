@@ -1,4 +1,8 @@
+using Microsoft.VisualBasic.Devices;
+using System;
 using System.Drawing.Imaging;
+using System.Numerics;
+using System.Windows.Forms;
 
 namespace FileMatch
 {
@@ -269,7 +273,13 @@ namespace FileMatch
 
         private void pictureBox1_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            PictureResize();
+            //PictureResize();
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.Top = 0;
+            pictureBox1.Left = 0;
+
+            PictureZoomFit();
+            UpdatePictureFocusPoint();
         }
 
         private void PictureResize()
@@ -286,6 +296,8 @@ namespace FileMatch
                 }
             }
         }
+
+
 
         private bool PictureFits(Image image, int containerWidth, int ContainerHeight)
         {
@@ -318,5 +330,224 @@ namespace FileMatch
         {
             listView2.BackColor = Color.White;
         }
+
+
+#region Drag Picture
+        Vector2 pictureFocusPoint = new Vector2(0f, 0f);
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            PictureDragStart(e.X, e.Y);
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            PictureDragStop();
+        }
+
+        private void pictureBox1_MouseLeave(object sender, EventArgs e)
+        {
+            PictureDragStop();
+        }
+
+        // From https://stackoverflow.com/questions/12603709/winform-move-an-image-inside-a-picturebox
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            Control c = sender as Control;
+            if (dragActive && c != null)
+            {
+                int maxX = pictureBox1.Size.Width * -1 + panelForPicture.Size.Width;
+                int maxY = pictureBox1.Size.Height * -1 + panelForPicture.Size.Height;
+
+                int newposLeft = e.X + c.Left - (int)dragPosition.X;
+                int newposTop = e.Y + c.Top - (int)dragPosition.Y;
+
+                if (newposTop > 0)
+                {
+                    newposTop = 0;
+                }
+                if (newposLeft > 0)
+                {
+                    newposLeft = 0;
+                }
+                if (newposLeft < maxX)
+                {
+                    newposLeft = maxX;
+                }
+                if (newposTop < maxY)
+                {
+                    newposTop = maxY;
+                }
+                c.Top = newposTop;
+                c.Left = newposLeft;
+                dragCurrent.X = newposLeft;
+                dragCurrent.Y = newposTop;
+            }
+
+            UpdatePictureFocusPoint();
+        }
+
+
+
+        Vector2 dragPosition = new Vector2();
+        Vector2 dragCurrent = new Vector2();
+        bool dragActive = false;
+
+        private void PictureDragStart(int x, int y)
+        {
+            dragActive = true;
+            dragPosition = new Vector2(x, y);// + dragCurrent;
+        }
+
+        private void PictureDragStop()
+        {
+            dragActive = false;
+            //dragPosition = dragCurrent;
+        }
+        #endregion -------------------------------------------------------------------------------------
+
+        #region Zoom Picture -------------------------------------------------------------------------------------
+
+        float currentZoom = 1f;
+        private void PictureZoom(float zoom)
+        {
+
+            UpdatePictureFocusPoint();
+            Vector2 pictureBoxSize = new Vector2(
+                Math.Max((int)(pictureBox1.Image.Width * zoom), panelForPicture.Width),
+                Math.Max((int)(pictureBox1.Image.Height * zoom), panelForPicture.Height)
+            );
+            pictureBox1.Width = (int)pictureBoxSize.X;
+            pictureBox1.Height = (int)pictureBoxSize.Y;
+
+            Vector2 pictureBoxHalf = new Vector2(pictureBox1.Width / 2, pictureBox1.Height / 2);
+            Vector2 panelSize = new Vector2(panelForPicture.Width, panelForPicture.Height);
+            Vector2 panelHalf = panelSize / 2;
+
+            Vector2 pictureBoxLocation = -pictureBoxHalf + panelHalf + (pictureFocusPoint * pictureBoxSize);
+
+            pictureBox1.Left = (int)pictureBoxLocation.X;
+            pictureBox1.Top = (int)pictureBoxLocation.Y;
+
+
+            labelTest.Text = "PBL: " + pictureBoxLocation + "    zoom: " + zoom + " pfp: " + pictureFocusPoint;
+
+            int minLeft = -(pictureBox1.Width - panelForPicture.Width);
+            int maxLeft = 0;
+            if (pictureBox1.Left < minLeft)
+                pictureBox1.Left = minLeft;
+
+            if (pictureBox1.Left > maxLeft)
+                pictureBox1.Left = maxLeft;
+
+            int minTop = -(pictureBox1.Height - panelForPicture.Height);
+            int maxTop = 0;
+            if (pictureBox1.Top < minTop)
+                pictureBox1.Top = minTop;
+
+            if (pictureBox1.Top > maxTop)
+                pictureBox1.Top = maxTop;
+
+            currentZoom = zoom;
+            UpdatePictureFocusPoint();
+        }
+
+        private void UpdatePictureFocusPoint()
+        {
+            Vector2 panelSize = new Vector2(panelForPicture.Width, panelForPicture.Height);
+            Vector2 panelHalf = panelSize / 2;
+            Vector2 pictureSize = new Vector2(pictureBox1.Width, pictureBox1.Height);
+            Vector2 pictureHalf = pictureSize / 2;
+            Vector2 picturePos = new Vector2(pictureBox1.Left, pictureBox1.Top);
+            Vector2 pictureScale = pictureSize / panelSize;
+
+            Vector2 pictureCenter = picturePos + pictureHalf;
+
+            Vector2 centerOffset = (pictureCenter - panelHalf);
+
+            //Vector2 pictureOffset = pictureHalf + picturePos;
+
+            pictureFocusPoint = centerOffset / pictureSize;
+
+            labelOffsetX.Text = "X: " + pictureFocusPoint.X;
+            labelOffsetY.Text = "Y: " + pictureFocusPoint.Y + ", " + centerOffset;
+
+            //Vector2 offset = panelCenter - pictureOffset;
+            //pictureFocusPoint = offset;// * currentZoom;
+        }
+
+        private void buttonZoom100_Click(object sender, EventArgs e)
+        {
+            PictureZoom(1f);
+        }
+
+        private void buttonZoomFit_Click(object sender, EventArgs e)
+        {
+            PictureZoomFit();
+        }
+
+        private void PictureZoomFit()
+        {
+            float zoomFitX = (float)panelForPicture.Width / (float)pictureBox1.Image.Width;
+            float zoomFitY = (float)panelForPicture.Height / (float)pictureBox1.Image.Height;
+
+            //labelTest.Text = zoomFitX + " " + zoomFitY + " from " + panelForPicture.Width + "/" + pictureBox1.Image.Width;
+
+            pictureBox1.Left = 0;
+            pictureBox1.Top = 0;
+
+            PictureZoom(Math.Min(zoomFitX, zoomFitY)); // bugged, sends 0f
+
+            //PictureZoom(0.01f);
+        }
+
+        private void buttonZoomPlus_Click(object sender, EventArgs e)
+        {
+            ZoomPlus();
+        }
+
+        private void ZoomPlus()
+        {
+            if (currentZoom >= 0.25f)
+            {
+                currentZoom += 0.25f;
+            }
+            else
+            {
+                currentZoom += 0.1f;
+                if (currentZoom > 0.25f) currentZoom = 0.25f;
+            }
+
+            if (currentZoom > 4f) currentZoom = 4f;
+
+            PictureZoom(currentZoom);
+        }
+
+        private void buttonZoomMinus_Click(object sender, EventArgs e)
+        {
+            ZoomMinus();
+        }
+
+        private void ZoomMinus()
+        {
+            if (currentZoom <= 0.25f)
+            {
+                currentZoom -= 0.1f;
+            }
+            else
+            {
+                currentZoom -= 0.25f;
+                if (currentZoom < 0.25f) currentZoom = 0.25f;
+            }
+
+            if (currentZoom < 0.1f)
+            {
+                currentZoom = 0.1f;
+                PictureZoomFit();
+            }
+            PictureZoom(currentZoom);
+        }
+        #endregion -------------------------------------------------------------------------------------
+
     }
 }

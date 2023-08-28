@@ -43,7 +43,16 @@
             button4 = new Button();
             button5 = new Button();
             button2 = new Button();
+            panelForPicture = new Panel();
+            buttonZoom100 = new Button();
+            buttonZoomFit = new Button();
+            buttonZoomPlus = new Button();
+            buttonZoomMinus = new Button();
+            labelOffsetX = new Label();
+            labelOffsetY = new Label();
+            labelTest = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            panelForPicture.SuspendLayout();
             SuspendLayout();
             // 
             // buttonSelectFolder1
@@ -103,12 +112,16 @@
             // pictureBox1
             // 
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            pictureBox1.Location = new Point(590, 41);
+            pictureBox1.Location = new Point(3, 3);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(774, 614);
+            pictureBox1.Size = new Size(768, 608);
             pictureBox1.TabIndex = 4;
             pictureBox1.TabStop = false;
             pictureBox1.LoadCompleted += pictureBox1_LoadCompleted;
+            pictureBox1.MouseDown += pictureBox1_MouseDown;
+            pictureBox1.MouseLeave += pictureBox1_MouseLeave;
+            pictureBox1.MouseMove += pictureBox1_MouseMove;
+            pictureBox1.MouseUp += pictureBox1_MouseUp;
             // 
             // button1
             // 
@@ -176,6 +189,7 @@
             // 
             // button2
             // 
+            button2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             button2.Location = new Point(477, 661);
             button2.Name = "button2";
             button2.Size = new Size(107, 23);
@@ -186,11 +200,97 @@
             button2.MouseEnter += button2_MouseEnter;
             button2.MouseLeave += button2_MouseLeave;
             // 
+            // panelForPicture
+            // 
+            panelForPicture.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelForPicture.AutoScroll = true;
+            panelForPicture.BackColor = Color.Black;
+            panelForPicture.Controls.Add(pictureBox1);
+            panelForPicture.Location = new Point(590, 41);
+            panelForPicture.Name = "panelForPicture";
+            panelForPicture.Size = new Size(774, 614);
+            panelForPicture.TabIndex = 14;
+            // 
+            // buttonZoom100
+            // 
+            buttonZoom100.Location = new Point(593, 12);
+            buttonZoom100.Name = "buttonZoom100";
+            buttonZoom100.Size = new Size(53, 23);
+            buttonZoom100.TabIndex = 15;
+            buttonZoom100.Text = "100%";
+            buttonZoom100.UseVisualStyleBackColor = true;
+            buttonZoom100.Click += buttonZoom100_Click;
+            // 
+            // buttonZoomFit
+            // 
+            buttonZoomFit.Location = new Point(652, 12);
+            buttonZoomFit.Name = "buttonZoomFit";
+            buttonZoomFit.Size = new Size(39, 23);
+            buttonZoomFit.TabIndex = 16;
+            buttonZoomFit.Text = "Fit";
+            buttonZoomFit.UseVisualStyleBackColor = true;
+            buttonZoomFit.Click += buttonZoomFit_Click;
+            // 
+            // buttonZoomPlus
+            // 
+            buttonZoomPlus.Location = new Point(697, 12);
+            buttonZoomPlus.Name = "buttonZoomPlus";
+            buttonZoomPlus.Size = new Size(39, 23);
+            buttonZoomPlus.TabIndex = 17;
+            buttonZoomPlus.Text = "+";
+            buttonZoomPlus.UseVisualStyleBackColor = true;
+            buttonZoomPlus.Click += buttonZoomPlus_Click;
+            // 
+            // buttonZoomMinus
+            // 
+            buttonZoomMinus.Location = new Point(742, 12);
+            buttonZoomMinus.Name = "buttonZoomMinus";
+            buttonZoomMinus.Size = new Size(39, 23);
+            buttonZoomMinus.TabIndex = 18;
+            buttonZoomMinus.Text = "-";
+            buttonZoomMinus.UseVisualStyleBackColor = true;
+            buttonZoomMinus.Click += buttonZoomMinus_Click;
+            // 
+            // labelOffsetX
+            // 
+            labelOffsetX.AutoSize = true;
+            labelOffsetX.Location = new Point(808, 16);
+            labelOffsetX.Name = "labelOffsetX";
+            labelOffsetX.Size = new Size(20, 15);
+            labelOffsetX.TabIndex = 19;
+            labelOffsetX.Text = "X: ";
+            // 
+            // labelOffsetY
+            // 
+            labelOffsetY.AutoSize = true;
+            labelOffsetY.Location = new Point(887, 16);
+            labelOffsetY.Name = "labelOffsetY";
+            labelOffsetY.Size = new Size(20, 15);
+            labelOffsetY.TabIndex = 20;
+            labelOffsetY.Text = "Y: ";
+            // 
+            // labelTest
+            // 
+            labelTest.AutoSize = true;
+            labelTest.Location = new Point(1063, 16);
+            labelTest.Name = "labelTest";
+            labelTest.Size = new Size(38, 15);
+            labelTest.TabIndex = 21;
+            labelTest.Text = "label1";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1376, 696);
+            Controls.Add(labelTest);
+            Controls.Add(labelOffsetY);
+            Controls.Add(labelOffsetX);
+            Controls.Add(buttonZoomMinus);
+            Controls.Add(buttonZoomPlus);
+            Controls.Add(buttonZoomFit);
+            Controls.Add(buttonZoom100);
+            Controls.Add(panelForPicture);
             Controls.Add(button2);
             Controls.Add(button5);
             Controls.Add(button4);
@@ -198,7 +298,6 @@
             Controls.Add(buttonScrollToTop);
             Controls.Add(buttonCompare);
             Controls.Add(button1);
-            Controls.Add(pictureBox1);
             Controls.Add(listView2);
             Controls.Add(buttonSelectFolder2);
             Controls.Add(listView1);
@@ -206,7 +305,9 @@
             Name = "Form1";
             Text = "File Match and Delete";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            panelForPicture.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -226,5 +327,13 @@
         private Button button4;
         private Button button5;
         private Button button2;
+        private Panel panelForPicture;
+        private Button buttonZoom100;
+        private Button buttonZoomFit;
+        private Button buttonZoomPlus;
+        private Button buttonZoomMinus;
+        private Label labelOffsetX;
+        private Label labelOffsetY;
+        private Label labelTest;
     }
 }
