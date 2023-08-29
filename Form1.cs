@@ -9,16 +9,15 @@ namespace FileMatch
 {
     public partial class Form1 : Form
     {
-        List<FileListing> files1 = new List<FileListing>();
-        List<FileListing> files2 = new List<FileListing>();
-        List<string> fileNamesNoExt = new List<string>();
-        int scrollPosition = 0;
-
         public Form1()
         {
             InitializeComponent();
         }
 
+        #region Load folder files -----------------------------------------------------------------
+        List<FileListing> files1 = new List<FileListing>();
+        List<FileListing> files2 = new List<FileListing>();
+        List<string> fileNamesNoExt = new List<string>();
         private void buttonSelectFolder1_Click(object sender, EventArgs e)
         {
             SelectFolder(listView1, files1);
@@ -57,7 +56,9 @@ namespace FileMatch
                 lvi.Tag = file;
             }
         }
+        #endregion ---------------------------------------------------------------------------------------
 
+        #region Compare Lists ---------------------------------------------------------------------
         private void CompareLists()
         {
             fileNamesNoExt.Clear();
@@ -131,9 +132,10 @@ namespace FileMatch
         {
             CompareLists();
         }
+        #endregion --------------------------------------------------------------------------------------
 
-
-
+        #region Scroll and align ------------------------------------------------------------------
+        int scrollPosition = 0;
         private void AlignViews(int position)
         {
             if (listView1.Items.Count > 0 && listView2.Items.Count > 0)
@@ -185,16 +187,9 @@ namespace FileMatch
                 scrollPosition = listView1.Items.Count - 1;
             AlignViews(scrollPosition);
         }
+        #endregion --------------------------------------------------------------------------------------
 
-        private void buttonDeletFiles1_Click(object sender, EventArgs e)
-        {
-            DeleteFiles(listView1);
-        }
-        private void buttonDeletFiles2_Click(object sender, EventArgs e)
-        {
-            DeleteFiles(listView2);
-        }
-
+        #region Delete Files ----------------------------------------------------------------------
         private void DeleteFiles(ListView listView)
         {
             if (listView.SelectedItems.Count == 0)
@@ -248,6 +243,38 @@ namespace FileMatch
                 }
             }
         }
+
+        private void buttonDeletFiles1_Click(object sender, EventArgs e)
+        {
+            DeleteFiles(listView1);
+        }
+        private void buttonDeletFiles2_Click(object sender, EventArgs e)
+        {
+            DeleteFiles(listView2);
+        }
+
+        private void buttonDelete1_MouseEnter(object sender, EventArgs e)
+        {
+            listView1.BackColor = Color.Yellow;
+        }
+
+        private void buttonDelete1_MouseLeave(object sender, EventArgs e)
+        {
+            listView1.BackColor = Color.White;
+        }
+
+        private void buttonDelete2_MouseEnter(object sender, EventArgs e)
+        {
+            listView2.BackColor = Color.Yellow;
+        }
+
+        private void buttonDelete2_MouseLeave(object sender, EventArgs e)
+        {
+            listView2.BackColor = Color.White;
+        }
+        #endregion ------------------------------------------------------------------------
+
+        #region Picture Load and Resize -----------------------------------------------------------
 
         Bitmap bmp;
         private void DisplayPicture(object sender, EventArgs e)
@@ -329,28 +356,25 @@ namespace FileMatch
             }
         }
 
-        private void buttonDelete1_MouseEnter(object sender, EventArgs e)
+        private void listView_Click(object sender, EventArgs e)
         {
-            listView1.BackColor = Color.Yellow;
+            if (checkBoxLoadPictureOnSingleClick.Checked)
+            {
+                DisplayPicture(sender, e);
+            }
         }
 
-        private void buttonDelete1_MouseLeave(object sender, EventArgs e)
+        private void listView_KeyUp(object sender, KeyEventArgs e)
         {
-            listView1.BackColor = Color.White;
+            if (checkBoxLoadPictureOnSingleClick.Checked)
+            {
+                DisplayPicture(sender, e);
+            }
         }
 
-        private void buttonDelete2_MouseEnter(object sender, EventArgs e)
-        {
-            listView2.BackColor = Color.Yellow;
-        }
+        #endregion -----------------------------------------------------------------------------------------------
 
-        private void buttonDelete2_MouseLeave(object sender, EventArgs e)
-        {
-            listView2.BackColor = Color.White;
-        }
-
-
-        #region Drag Picture -------------------------------------------------------------------------------------
+        #region Drag Picture ----------------------------------------------------------------------
         Vector2 pictureFocusPoint = new Vector2(0f, 0f);
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -424,7 +448,7 @@ namespace FileMatch
         }
         #endregion -------------------------------------------------------------------------------------
 
-        #region Zoom Picture -------------------------------------------------------------------------------------
+        #region Zoom Picture ----------------------------------------------------------------------
 
         float currentZoom = 1f;
         private void PictureZoom(float zoom)
@@ -558,7 +582,7 @@ namespace FileMatch
         }
         #endregion -------------------------------------------------------------------------------------
 
-        #region File Match -------------------------------------------------------------------------------
+        #region File Match ------------------------------------------------------------------------
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             //SelectItemHighlightMatches(listView1, listView2);
@@ -649,20 +673,6 @@ namespace FileMatch
         }
         #endregion -------------------------------------------------------------------------
 
-        private void listView_Click(object sender, EventArgs e)
-        {
-            if (checkBoxLoadPictureOnSingleClick.Checked)
-            {
-                DisplayPicture(sender, e);
-            }
-        }
 
-        private void listView_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (checkBoxLoadPictureOnSingleClick.Checked)
-            {
-                DisplayPicture(sender, e);
-            }
-        }
     }
 }
