@@ -249,6 +249,7 @@ namespace FileMatch
             }
         }
 
+        Bitmap bmp;
         private void DisplayPicture(object sender, EventArgs e)
         {
             ListView listView = sender as ListView;
@@ -265,7 +266,14 @@ namespace FileMatch
                         List<string> allowedExtensions = new List<string> { ".jpg", ".jpeg", ".bmp", ".gif", ".png", ".ico", ".tiff", ".webp" };
                         if (allowedExtensions.Contains(extension))
                         {
-                            pictureBox1.ImageLocation = fileName;
+                            //method 1
+                            //pictureBox1.ImageLocation = fileName; //works with PictureBox LoadCompleted, but doesn't release memory (Dispose)
+
+                            //method 2
+                            if (bmp != null) bmp.Dispose();
+                            bmp = new Bitmap(fileName);
+                            pictureBox1.Image = bmp; // scaling is bugged now......................
+                            PictureLoadComplete();
                         }
                         else
                         {
@@ -279,11 +287,15 @@ namespace FileMatch
 
         private void pictureBox1_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            //PictureResize();
+            PictureLoadComplete();
+        }
+
+        private void PictureLoadComplete()
+        {
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.Top = 0;
             pictureBox1.Left = 0;
-
+            //MessageBox.Show(bmp.Width + ", " + bmp.Height + " / " + pictureBox1.Image.Width + ", " + pictureBox1.Image.Height);
             PictureZoomFit();
             UpdatePictureFocusPoint();
         }
