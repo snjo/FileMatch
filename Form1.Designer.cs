@@ -81,7 +81,7 @@
             listView1.Columns.AddRange(new ColumnHeader[] { ColumnFile1, ColumnDeleted1, ColumnMatch1 });
             listView1.Location = new Point(12, 41);
             listView1.Name = "listView1";
-            listView1.Size = new Size(265, 614);
+            listView1.Size = new Size(265, 635);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -123,7 +123,7 @@
             pictureBox1.ErrorImage = (Image)resources.GetObject("pictureBox1.ErrorImage");
             pictureBox1.Location = new Point(3, 3);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(768, 608);
+            pictureBox1.Size = new Size(815, 632);
             pictureBox1.TabIndex = 4;
             pictureBox1.TabStop = false;
             pictureBox1.LoadCompleted += pictureBox1_LoadCompleted;
@@ -135,7 +135,7 @@
             // buttonDelete1
             // 
             buttonDelete1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            buttonDelete1.Location = new Point(170, 661);
+            buttonDelete1.Location = new Point(170, 682);
             buttonDelete1.Name = "buttonDelete1";
             buttonDelete1.Size = new Size(107, 23);
             buttonDelete1.TabIndex = 5;
@@ -148,7 +148,7 @@
             // buttonCompare
             // 
             buttonCompare.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            buttonCompare.Location = new Point(12, 661);
+            buttonCompare.Location = new Point(12, 682);
             buttonCompare.Name = "buttonCompare";
             buttonCompare.Size = new Size(107, 23);
             buttonCompare.TabIndex = 6;
@@ -199,7 +199,7 @@
             // buttonDelete2
             // 
             buttonDelete2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            buttonDelete2.Location = new Point(477, 661);
+            buttonDelete2.Location = new Point(477, 682);
             buttonDelete2.Name = "buttonDelete2";
             buttonDelete2.Size = new Size(107, 23);
             buttonDelete2.TabIndex = 13;
@@ -217,7 +217,7 @@
             panelForPicture.Controls.Add(pictureBox1);
             panelForPicture.Location = new Point(590, 41);
             panelForPicture.Name = "panelForPicture";
-            panelForPicture.Size = new Size(774, 614);
+            panelForPicture.Size = new Size(821, 638);
             panelForPicture.TabIndex = 14;
             // 
             // buttonZoom100
@@ -267,7 +267,7 @@
             listView2.Columns.AddRange(new ColumnHeader[] { ColumnFile2, ColumnDeleted2, ColumnMatch2 });
             listView2.Location = new Point(319, 44);
             listView2.Name = "listView2";
-            listView2.Size = new Size(265, 614);
+            listView2.Size = new Size(265, 635);
             listView2.TabIndex = 22;
             listView2.UseCompatibleStateImageBehavior = false;
             listView2.View = View.Details;
@@ -298,7 +298,7 @@
             checkBoxMarkMatches.AutoSize = true;
             checkBoxMarkMatches.Checked = true;
             checkBoxMarkMatches.CheckState = CheckState.Checked;
-            checkBoxMarkMatches.Location = new Point(319, 664);
+            checkBoxMarkMatches.Location = new Point(319, 685);
             checkBoxMarkMatches.Name = "checkBoxMarkMatches";
             checkBoxMarkMatches.Size = new Size(101, 19);
             checkBoxMarkMatches.TabIndex = 23;
@@ -321,10 +321,11 @@
             // 
             // checkBoxLoadPictureOnSingleClick
             // 
+            checkBoxLoadPictureOnSingleClick.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             checkBoxLoadPictureOnSingleClick.AutoSize = true;
             checkBoxLoadPictureOnSingleClick.Checked = true;
             checkBoxLoadPictureOnSingleClick.CheckState = CheckState.Checked;
-            checkBoxLoadPictureOnSingleClick.Location = new Point(593, 664);
+            checkBoxLoadPictureOnSingleClick.Location = new Point(593, 685);
             checkBoxLoadPictureOnSingleClick.Name = "checkBoxLoadPictureOnSingleClick";
             checkBoxLoadPictureOnSingleClick.Size = new Size(231, 19);
             checkBoxLoadPictureOnSingleClick.TabIndex = 24;
@@ -355,7 +356,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1376, 696);
+            ClientSize = new Size(1423, 717);
             Controls.Add(button1);
             Controls.Add(buttonClear1);
             Controls.Add(checkBoxLoadPictureOnSingleClick);
