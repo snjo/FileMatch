@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             buttonSelectFolder1 = new Button();
             listView1 = new ListView();
             ColumnFile1 = new ColumnHeader();
@@ -57,6 +58,8 @@
             timerMarkMatches = new System.Windows.Forms.Timer(components);
             labelZoom = new Label();
             checkBoxLoadPictureOnSingleClick = new CheckBox();
+            buttonClear1 = new Button();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelForPicture.SuspendLayout();
             SuspendLayout();
@@ -73,6 +76,7 @@
             // 
             // listView1
             // 
+            listView1.AllowDrop = true;
             listView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listView1.Columns.AddRange(new ColumnHeader[] { ColumnFile1, ColumnDeleted1, ColumnMatch1 });
             listView1.Location = new Point(12, 41);
@@ -83,6 +87,8 @@
             listView1.View = View.Details;
             listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
             listView1.Click += listView_Click;
+            listView1.DragDrop += listView1_DragDrop;
+            listView1.DragEnter += listView1_DragEnter;
             listView1.DoubleClick += DisplayPicture;
             listView1.KeyUp += listView_KeyUp;
             // 
@@ -114,6 +120,7 @@
             // pictureBox1
             // 
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pictureBox1.ErrorImage = (Image)resources.GetObject("pictureBox1.ErrorImage");
             pictureBox1.Location = new Point(3, 3);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(768, 608);
@@ -255,6 +262,7 @@
             // 
             // listView2
             // 
+            listView2.AllowDrop = true;
             listView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listView2.Columns.AddRange(new ColumnHeader[] { ColumnFile2, ColumnDeleted2, ColumnMatch2 });
             listView2.Location = new Point(319, 44);
@@ -263,8 +271,10 @@
             listView2.TabIndex = 22;
             listView2.UseCompatibleStateImageBehavior = false;
             listView2.View = View.Details;
-            listView2.ItemSelectionChanged += listView1_ItemSelectionChanged;
+            listView2.ItemSelectionChanged += listView2_ItemSelectionChanged;
             listView2.Click += listView_Click;
+            listView2.DragDrop += listView2_DragDrop;
+            listView2.DragEnter += listView2_DragEnter;
             listView2.DoubleClick += DisplayPicture;
             // 
             // ColumnFile2
@@ -321,11 +331,33 @@
             checkBoxLoadPictureOnSingleClick.Text = "Load pictures on single click / keypress";
             checkBoxLoadPictureOnSingleClick.UseVisualStyleBackColor = true;
             // 
+            // buttonClear1
+            // 
+            buttonClear1.Location = new Point(125, 12);
+            buttonClear1.Name = "buttonClear1";
+            buttonClear1.Size = new Size(56, 23);
+            buttonClear1.TabIndex = 25;
+            buttonClear1.Text = "Clear";
+            buttonClear1.UseVisualStyleBackColor = true;
+            buttonClear1.Click += buttonClear1_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(432, 12);
+            button1.Name = "button1";
+            button1.Size = new Size(56, 23);
+            button1.TabIndex = 26;
+            button1.Text = "Clear";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += buttonClear2_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1376, 696);
+            Controls.Add(button1);
+            Controls.Add(buttonClear1);
             Controls.Add(checkBoxLoadPictureOnSingleClick);
             Controls.Add(checkBoxMarkMatches);
             Controls.Add(listView2);
@@ -383,5 +415,7 @@
         private System.Windows.Forms.Timer timerMarkMatches;
         private Label labelZoom;
         private CheckBox checkBoxLoadPictureOnSingleClick;
+        private Button buttonClear1;
+        private Button button1;
     }
 }

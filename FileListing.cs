@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FileMatch
 {
-    public class FileListing
+    public class FileListing : IEquatable<FileListing>
     {
         public string Folder = string.Empty;
         public string FileName = string.Empty;
@@ -84,6 +84,11 @@ namespace FileMatch
         public bool FolderExists()
         {
             return Directory.Exists(Folder);
+        }
+
+        public bool Equals(FileListing? other)
+        {
+            return FileNameWithoutExtension == other.FileNameWithoutExtension;
         }
     }
 }

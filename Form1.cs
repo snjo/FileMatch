@@ -1,9 +1,12 @@
 using Microsoft.VisualBasic.Devices;
 using System;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Numerics;
 using System.Windows.Forms;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using ListView = System.Windows.Forms.ListView;
 
 namespace FileMatch
 {
@@ -14,7 +17,7 @@ namespace FileMatch
             InitializeComponent();
         }
 
-        #region Load folder files -----------------------------------------------------------------
+        #region Load folder files + drag and drop -------------------------------------------------
         List<FileListing> files1 = new List<FileListing>();
         List<FileListing> files2 = new List<FileListing>();
         List<string> fileNamesNoExt = new List<string>();
@@ -41,10 +44,15 @@ namespace FileMatch
             listView.Items.Clear();
             fileList.Clear();
             string[] filesInFolder = Directory.GetFiles(path);
+            LoadFiles(filesInFolder, listView, fileList);
+        }
 
-            foreach (string file in filesInFolder)
+        private void LoadFiles(string[] files, ListView listView, List<FileListing> fileList)
+        {
+            foreach (string file in files)
             {
-                fileList.Add(new FileListing(file, file));
+                if (File.Exists(file))
+                    fileList.Add(new FileListing(file, file));
             }
 
             foreach (FileListing file in fileList)
@@ -55,6 +63,60 @@ namespace FileMatch
                 //lvi.Tag = file.FullPath;
                 lvi.Tag = file;
             }
+        }
+
+        private void DragDropFileOrFolder(object sender, DragEventArgs e, List<FileListing> targetFilesList)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] dropText = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (dropText != null && dropText.Length > 0)
+                {
+                    if (Directory.Exists(dropText[0]))
+                    {
+                        LoadFolder(dropText[0], (ListView)sender, targetFilesList);
+                    }
+                    else if (File.Exists(dropText[0])) { }
+                    {
+                        LoadFiles(dropText, (ListView)sender, targetFilesList);
+                    }
+                }
+            }
+        }
+
+        private void listView1_DragDrop(object sender, DragEventArgs e)
+        {
+            List<FileListing> targetFilesList = files1;
+            DragDropFileOrFolder(sender, e, targetFilesList);
+        }
+
+        private void listView1_DragEnter(object sender, DragEventArgs e)
+        {
+            DragDropEffects d = DragDropEffects.Copy;
+            e.Effect = d;
+        }
+
+        private void listView2_DragDrop(object sender, DragEventArgs e)
+        {
+            List<FileListing> targetFilesList = files2;
+            DragDropFileOrFolder(sender, e, targetFilesList);
+        }
+
+        private void listView2_DragEnter(object sender, DragEventArgs e)
+        {
+            DragDropEffects d = DragDropEffects.Copy;
+            e.Effect = d;
+        }
+
+        private void buttonClear1_Click(object sender, EventArgs e)
+        {
+            listView1.Items.Clear();
+            files1.Clear();
+        }
+        private void buttonClear2_Click(object sender, EventArgs e)
+        {
+            listView2.Items.Clear();
+            files2.Clear();
         }
         #endregion ---------------------------------------------------------------------------------------
 
@@ -80,18 +142,26 @@ namespace FileMatch
 
             ListView lvx = new ListView();
 
-            ListViewAddItems(newList1, listView1);
-            ListViewAddItems(newList2, listView2);
+            ListViewAddItems(newList1, listView1, newList2);
+            ListViewAddItems(newList2, listView2, newList1);
         }
 
-        private static void ListViewAddItems(List<FileListing> newList1, ListView listView)
+        private static void ListViewAddItems(List<FileListing> newList, ListView listView, List<FileListing> compareToList)
         {
-            foreach (FileListing fileListing in newList1)
+            foreach (FileListing fileListing in newList)
             {
                 ListViewItem lvi = listView.Items.Add(fileListing.DisplayName);
                 lvi.SubItems.Add(string.Empty);
                 lvi.SubItems.Add(string.Empty);
                 lvi.Tag = fileListing;//.FullPath;
+                if (compareToList.Contains(fileListing))
+                {
+                    lvi.ForeColor = Color.DarkBlue;
+                }
+                else
+                {
+                    lvi.ForeColor = Color.Orange;
+                }
             }
         }
 
@@ -299,12 +369,13 @@ namespace FileMatch
                             //method 2
                             if (bmp != null) bmp.Dispose();
                             bmp = new Bitmap(fileName);
-                            pictureBox1.Image = bmp; // scaling is bugged now......................
+                            pictureBox1.Image = bmp;
                             PictureLoadComplete();
                         }
                         else
                         {
-                            MessageBox.Show("Not a recognized image extension");
+                            pictureBox1.Image = pictureBox1.ErrorImage;
+                            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
                         }
                     }
                 }
@@ -630,7 +701,7 @@ namespace FileMatch
                     if (item1.SubItems.Count < 3) item1.SubItems.Add("");
                     //string name1 = Path.GetFileNameWithoutExtension(item1.Tag.ToString());
                     string name1 = (item1.Tag as FileListing).FileNameWithoutExtension;
-
+                    bool found = false;
 
 
                     foreach (ListViewItem item2 in lv2.Items)
@@ -644,12 +715,16 @@ namespace FileMatch
                                 item1.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B9C";
                                 item2.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B05";
                                 selectNumber++;
+                                found = true;
                                 break;
                             }
 
                         }
                     }
-
+                    if (!found)
+                    {
+                        item1.SubItems[2].Text = "X";
+                    }
 
                 }
             }
@@ -672,6 +747,9 @@ namespace FileMatch
             ClearSubItem(listView2 as ListView, 2);
         }
         #endregion -------------------------------------------------------------------------
+
+
+
 
 
     }
