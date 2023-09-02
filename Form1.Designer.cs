@@ -255,7 +255,7 @@
             FileGrid.Location = new Point(12, 44);
             FileGrid.Name = "FileGrid";
             FileGrid.RowHeadersVisible = false;
-            FileGrid.RowTemplate.Height = 25;
+            FileGrid.RowTemplate.Height = 50;
             FileGrid.Size = new Size(572, 632);
             FileGrid.TabIndex = 27;
             FileGrid.SelectionChanged += GridSelectionChange;

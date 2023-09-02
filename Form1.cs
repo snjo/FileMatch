@@ -449,6 +449,7 @@ namespace FileMatch
         }
 
         Bitmap bmp;
+        private const int exifOrientationID = 0x112; //274
         private void DisplayPicture(object sender, EventArgs e)
         {
             DataGridView? grid = sender as DataGridView;
@@ -474,8 +475,32 @@ namespace FileMatch
                                 //method 2
                                 if (bmp != null) bmp.Dispose();
                                 bmp = new Bitmap(fileName);
+
+                                if (bmp.PropertyIdList.Contains(exifOrientationID)) // check for rotated image
+                                {
+                                    var prop = bmp.GetPropertyItem(exifOrientationID);
+                                    int val = BitConverter.ToUInt16(prop.Value, 0);
+                                    var rot = RotateFlipType.RotateNoneFlipNone;
+
+                                    if (val == 3 || val == 4)
+                                        rot = RotateFlipType.Rotate180FlipNone;
+                                    else if (val == 5 || val == 6)
+                                        rot = RotateFlipType.Rotate90FlipNone;
+                                    else if (val == 7 || val == 8)
+                                        rot = RotateFlipType.Rotate270FlipNone;
+
+                                    if (val == 2 || val == 4 || val == 5 || val == 7)
+                                        rot |= RotateFlipType.RotateNoneFlipX;
+
+                                    if (rot != RotateFlipType.RotateNoneFlipNone)
+                                    {
+                                        bmp.RotateFlip(rot);
+                                        bmp.RemovePropertyItem(exifOrientationID);
+                                    }
+                                }
+
                                 pictureBox1.Image = bmp;
-                                PictureLoadComplete();
+                                PictureLoadComplete(sender);
                             }
                             else
                             {
@@ -491,10 +516,10 @@ namespace FileMatch
 
         private void pictureBox1_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
-            PictureLoadComplete();
+            //PictureLoadComplete(sender);
         }
 
-        private void PictureLoadComplete()
+        private void PictureLoadComplete(object sender)
         {
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.Top = 0;
@@ -502,6 +527,37 @@ namespace FileMatch
             //MessageBox.Show(bmp.Width + ", " + bmp.Height + " / " + pictureBox1.Image.Width + ", " + pictureBox1.Image.Height);
             PictureZoomFit();
             UpdatePictureFocusPoint();
+            SetThumbnail(((DataGridView)sender).SelectedCells[0]);
+        }
+
+        private Vector2 thumbSize = new Vector2(50, 50);
+        private void SetThumbnail(DataGridViewCell cell)
+        {
+            ((DataGridViewImageCell)cell.OwningRow.Cells[2]).Value = CreateThumbnail(bmp, thumbSize);
+        }
+
+
+        private Bitmap CreateThumbnail(Bitmap sourceBitmap, Vector2 size)
+        {
+            Image.GetThumbnailImageAbort myCallback = new Image.GetThumbnailImageAbort(ThumbnailCallback);
+            Vector2 ratio = new Vector2(1f, 1f);
+            if (size.X > size.Y)
+            {
+                ratio = new(1f, (float)sourceBitmap.Height / (float)sourceBitmap.Width);
+            }
+            else
+            {
+                ratio = new((float)sourceBitmap.Width / (float)sourceBitmap.Height, 1f);
+            }
+            size = size * ratio;
+            Bitmap thumb = new Bitmap((int)size.X, (int)size.Y);
+            thumb = (Bitmap)sourceBitmap.GetThumbnailImage((int)size.X, (int)size.Y, myCallback, IntPtr.Zero);
+            return thumb;
+        }
+
+        public bool ThumbnailCallback()
+        {
+            return false;
         }
 
         private void PictureResize()
