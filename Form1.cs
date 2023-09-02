@@ -1,10 +1,13 @@
 using Microsoft.VisualBasic.Devices;
 using System;
+using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using ListView = System.Windows.Forms.ListView;
 
@@ -12,6 +15,9 @@ namespace FileMatch
 {
     public partial class Form1 : Form
     {
+
+        int columnFilesLeft = 1;
+        int columnFilesRight = 4;
         public Form1()
         {
             InitializeComponent();
@@ -23,11 +29,13 @@ namespace FileMatch
         List<string> fileNamesNoExt = new List<string>();
         private void buttonSelectFolder1_Click(object sender, EventArgs e)
         {
-            SelectFolder(listView1, files1);
+            //SelectFolder(listView1, files1);
+            SelectFolder(columnFilesLeft, files1);
         }
         private void buttonSelectFolder2_Click(object sender, EventArgs e)
         {
-            SelectFolder(listView2, files2);
+            //SelectFolder(listView2, files2);
+            SelectFolder(columnFilesRight, files2);
         }
 
         private void SelectFolder(ListView lv, List<FileListing> fileList)
@@ -39,6 +47,8 @@ namespace FileMatch
             }
         }
 
+
+
         private void LoadFolder(string path, ListView listView, List<FileListing> fileList)
         {
             listView.Items.Clear();
@@ -46,6 +56,7 @@ namespace FileMatch
             string[] filesInFolder = Directory.GetFiles(path);
             LoadFiles(filesInFolder, listView, fileList);
         }
+
 
         private void LoadFiles(string[] files, ListView listView, List<FileListing> fileList)
         {
@@ -65,7 +76,52 @@ namespace FileMatch
             }
         }
 
-        private void DragDropFileOrFolder(object sender, DragEventArgs e, List<FileListing> targetFilesList)
+        //---------------------- new test 
+        private void SelectFolder(int column, List<FileListing> fileList)
+        {
+            DialogResult folderResult = folderBrowserDialog1.ShowDialog();
+            if (folderResult == DialogResult.OK)
+            {
+                LoadFolder(folderBrowserDialog1.SelectedPath, column, fileList);
+            }
+        }
+        private void LoadFolder(string path, int column, List<FileListing> fileList)
+        {
+            ClearColumn(column);
+
+            fileList.Clear();
+
+            string[] filesInFolder = Directory.GetFiles(path);
+            LoadFiles(filesInFolder, column, fileList);
+        }
+
+        private void ClearColumn(int column)
+        {
+            foreach (DataGridViewRow row in FileGrid.Rows)
+            {
+                row.Cells[column].Value = null;
+            }
+        }
+
+        private void LoadFiles(string[] files, int column, List<FileListing> fileList)
+        {
+            foreach (string file in files)
+            {
+                if (File.Exists(file))
+                    fileList.Add(new FileListing(file, file));
+            }
+
+            if (FileGrid.Rows.Count < fileList.Count) FileGrid.Rows.Add(fileList.Count - FileGrid.Rows.Count);
+
+            for (int i = 0; i < fileList.Count; i++)
+            {
+                FileGrid.Rows[i].Cells[column].Value = fileList[i].FileName;
+                FileGrid.Rows[i].Cells[column].Tag = fileList[i];
+            }
+        }
+        // end new test -----------------------------
+
+        /*private void DragDropFileOrFolder(object sender, DragEventArgs e, List<FileListing> targetFilesList)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -82,8 +138,8 @@ namespace FileMatch
                     }
                 }
             }
-        }
-
+        }*/
+        /*
         private void listView1_DragDrop(object sender, DragEventArgs e)
         {
             List<FileListing> targetFilesList = files1;
@@ -106,16 +162,18 @@ namespace FileMatch
         {
             DragDropEffects d = DragDropEffects.Copy;
             e.Effect = d;
-        }
+        }*/
 
         private void buttonClear1_Click(object sender, EventArgs e)
         {
-            listView1.Items.Clear();
+            //listView1.Items.Clear();
+            ClearColumn(columnFilesLeft);
             files1.Clear();
         }
         private void buttonClear2_Click(object sender, EventArgs e)
         {
-            listView2.Items.Clear();
+            //listView2.Items.Clear();
+            ClearColumn(columnFilesRight);
             files2.Clear();
         }
         #endregion ---------------------------------------------------------------------------------------
@@ -133,20 +191,42 @@ namespace FileMatch
 
             foreach (string uniqueName in fileNamesNoExt)
             {
-                AddLines(newList1, uniqueName, files1);//AddLines(newList1, uniqueName, files1);
-                AddLines(newList2, uniqueName, files2);
+                AddLines(newList1, uniqueName, files1, columnFilesLeft);//AddLines(newList1, uniqueName, files1);
+                AddLines(newList2, uniqueName, files2, columnFilesRight);
             }
 
-            listView1.Items.Clear();
-            listView2.Items.Clear();
+            ClearColumn(columnFilesLeft);
+            ClearColumn(columnFilesRight);
 
             ListView lvx = new ListView();
 
-            ListViewAddItems(newList1, listView1, newList2);
-            ListViewAddItems(newList2, listView2, newList1);
+            ColumnAddItems(columnFilesLeft, newList1, newList2);
+            ColumnAddItems(columnFilesRight, newList2, newList1);
         }
 
-        private static void ListViewAddItems(List<FileListing> newList, ListView listView, List<FileListing> compareToList)
+        private void ColumnAddItems(int column, List<FileListing> newList, List<FileListing> compareToList)
+        {
+            //foreach (FileListing fileListing in newList)
+            for (int i = 0; i < newList.Count; i++)
+            {
+                Debug.WriteLine("column " + column + ", row " + i + ".   FileGrid Rows: " + FileGrid.Rows.Count);
+                DataGridViewRow row = FileGrid.Rows[i];
+                DataGridViewCell cell = row.Cells[column];
+                cell.Value = newList[i].DisplayName;
+                cell.Tag = newList[i];
+
+                if (compareToList.Contains(newList[i]))
+                {
+                    cell.Style.ForeColor = Color.DarkBlue;
+                }
+                else
+                {
+                    cell.Style.ForeColor = Color.Orange;
+                }
+            }
+        }
+
+        /*private static void ListViewAddItems(List<FileListing> newList, ListView listView, List<FileListing> compareToList)
         {
             foreach (FileListing fileListing in newList)
             {
@@ -163,9 +243,9 @@ namespace FileMatch
                     lvi.ForeColor = Color.Orange;
                 }
             }
-        }
+        }*/
 
-        private void AddLines(List<FileListing> newList, string uniqueName, List<FileListing> list)
+        private void AddLines(List<FileListing> newList, string uniqueName, List<FileListing> list, int column = 0)
         {
             FileListing fileListing = null;
             foreach (FileListing file in list)
@@ -179,10 +259,12 @@ namespace FileMatch
             if (fileListing != null)
             {
                 newList.Add(fileListing);
+                Debug.WriteLine("adding to column " + column + ": " + uniqueName);
             }
             else
             {
                 newList.Add(new FileListing(true, "..."));
+                Debug.WriteLine("skipping column  " + column + ": " + uniqueName);
             }
         }
 
@@ -205,8 +287,8 @@ namespace FileMatch
         #endregion --------------------------------------------------------------------------------------
 
         #region Scroll and align ------------------------------------------------------------------
-        int scrollPosition = 0;
-        private void AlignViews(int position)
+        //int scrollPosition = 0;
+        /*private void AlignViews(int position)
         {
             if (listView1.Items.Count > 0 && listView2.Items.Count > 0)
             {
@@ -214,8 +296,8 @@ namespace FileMatch
                 listView2.EnsureVisible(Math.Min(position, listView2.Items.Count - 1));
                 position++;
             }
-        }
-
+        }*/
+        /*
         private void buttonScrollToTop_Click(object sender, EventArgs e)
         {
             scrollPosition = 0;
@@ -226,29 +308,29 @@ namespace FileMatch
         {
             scrollPosition = listView1.Items.Count - 1;
             AlignViews(scrollPosition);
-        }
-
+        }*/
+        /*
         private void buttonScrollUpMore(object sender, EventArgs e)
         {
-            Scroll(-10);
+            ScrollList(-10);
         }
 
         private void buttonScrollDownMore(object sender, EventArgs e)
         {
-            Scroll(10);
+            ScrollList(10);
         }
 
         private void buttonScrollUp_Click(object sender, EventArgs e)
         {
-            Scroll(-1);
+            ScrollList(-1);
         }
 
         private void buttonScrollDown_Click(object sender, EventArgs e)
         {
-            Scroll(1);
-        }
-
-        private void Scroll(int amount)
+            ScrollList(1);
+        }*/
+        /*
+        private void ScrollList(int amount)
         {
             scrollPosition += amount;
             if (scrollPosition < 0)
@@ -256,64 +338,76 @@ namespace FileMatch
             if (scrollPosition >= listView1.Items.Count)
                 scrollPosition = listView1.Items.Count - 1;
             AlignViews(scrollPosition);
-        }
+        }*/
         #endregion --------------------------------------------------------------------------------------
 
         #region Delete Files ----------------------------------------------------------------------
-        private void DeleteFiles(ListView listView)
+        private void DeleteFiles(DataGridView grid) // change to checkbox selection
         {
-            if (listView.SelectedItems.Count == 0)
+            if (grid.SelectedCells.Count == 0)
             {
-                MessageBox.Show("No files selected in this column", "Delete files");
+                MessageBox.Show("No files selected", "Delete files");
                 return;
             }
 
-            DialogResult confirmDelete = MessageBox.Show("Delete " + listView.SelectedItems.Count + " files?", "Delete files", MessageBoxButtons.OKCancel);
+            DialogResult confirmDelete = MessageBox.Show("Delete " + grid.SelectedCells.Count + " files?", "Delete files", MessageBoxButtons.OKCancel);
             if (confirmDelete != DialogResult.OK) return;
-            foreach (ListViewItem selected in listView.SelectedItems)
+
+            string errorFiles = string.Empty;
+            bool error = false;
+
+            foreach (DataGridViewCell selected in grid.SelectedCells)
             {
-                //MessageBox.Show("Init " + selected.Tag.ToString());
-                bool deleted = false;
-                string errorFiles = string.Empty;
-                bool error = false;
-
-                if (selected.Tag != null)
+                if (selected.ColumnIndex == columnFilesLeft || selected.ColumnIndex == columnFilesRight)
                 {
-                    //string fileName = selected.Tag.ToString();
-                    string fileName = (selected.Tag as FileListing).FullPath;
-                    if (!File.Exists(fileName))
+                    bool deleted = false;
+
+                    if (selected.Tag != null)
                     {
-                        MessageBox.Show("Can't locate file " + fileName);
-                        return;
+                        //string fileName = selected.Tag.ToString();
+                        string fileName = (selected.Tag as FileListing).FullPath;
+                        if (File.Exists(fileName))
+                        {
+                            try
+                            {
+                                File.Delete(fileName);
+                                deleted = true;
+                            }
+                            catch
+                            {
+                                errorFiles += fileName + " ";
+                                error = true;
+                            }
+                        }
+                        else
+                        {
+                            errorFiles += fileName + " ";
+                            error = true;
+                        }
                     }
-                    try
+                    else
                     {
-                        File.Delete(fileName);
-                        deleted = true;
+                        MessageBox.Show("Can't delete selected item");
                     }
-                    catch
+
+                    if (deleted)
                     {
-                        errorFiles += fileName + " ";
-                        error = true;
+                        selected.Style.BackColor = Color.LightPink;
+                        selected.Style.ForeColor = Color.DarkRed;
                     }
                 }
-
-                if (deleted)
-                {
-                    selected.BackColor = Color.LightPink;
-                    selected.ForeColor = Color.DarkRed;
-                    if (selected.SubItems[1] == null) selected.SubItems.Add("");
-                    if (selected.SubItems[2] == null) selected.SubItems.Add("");
-                    selected.SubItems[1].Text = "DEL";
-                }
-
-                if (error)
-                {
-                    MessageBox.Show("Couldn't delete files: " + Environment.NewLine + errorFiles);
-                }
+            }
+            if (error)
+            {
+                MessageBox.Show("Couldn't delete files: " + Environment.NewLine + errorFiles);
             }
         }
 
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            DeleteFiles(FileGrid);
+        }
+        /*
         private void buttonDeletFiles1_Click(object sender, EventArgs e)
         {
             DeleteFiles(listView1);
@@ -341,7 +435,7 @@ namespace FileMatch
         private void buttonDelete2_MouseLeave(object sender, EventArgs e)
         {
             listView2.BackColor = Color.White;
-        }
+        }*/
         #endregion ------------------------------------------------------------------------
 
         #region Picture Load and Resize -----------------------------------------------------------
@@ -654,6 +748,7 @@ namespace FileMatch
         #endregion -------------------------------------------------------------------------------------
 
         #region File Match ------------------------------------------------------------------------
+        /*
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             //SelectItemHighlightMatches(listView1, listView2);
@@ -663,7 +758,7 @@ namespace FileMatch
         private void listView2_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             StartMatchingTimer(listView2, listView1);
-        }
+        }*/
 
         private void StartMatchingTimer(ListView lv1, ListView lv2)
         {
@@ -679,13 +774,15 @@ namespace FileMatch
         private bool markMatchStarted = false;
         private ListView matchList1;
         private ListView matchList2;
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             markMatchStarted = false;
             timerMarkMatches.Stop();
-            SelectItemHighlightMatches(matchList1, matchList2);
+            //SelectItemHighlightMatches(matchList1, matchList2);
         }
 
+        /*
         private void SelectItemHighlightMatches(ListView lv1, ListView lv2)
         {
             if (!checkBoxMarkMatches.Checked) return;
@@ -728,7 +825,7 @@ namespace FileMatch
 
                 }
             }
-        }
+        }*/
 
         private static void ClearSubItem(ListView lv1, int num)
         {
@@ -738,19 +835,15 @@ namespace FileMatch
                     lvi.SubItems[num].Text = "";
             }
         }
-
+        /*
         private void checkBoxMarkMatches_CheckedChanged(object sender, EventArgs e)
         {
             ClearSubItem(listView1 as ListView, 1);
             ClearSubItem(listView1 as ListView, 2);
             ClearSubItem(listView2 as ListView, 1);
             ClearSubItem(listView2 as ListView, 2);
-        }
+        }*/
         #endregion -------------------------------------------------------------------------
-
-
-
-
 
     }
 }
