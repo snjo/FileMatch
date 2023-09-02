@@ -38,27 +38,27 @@ namespace FileMatch
             SelectFolder(columnFilesRight, files2);
         }
 
-        private void SelectFolder(ListView lv, List<FileListing> fileList)
+        /*private void SelectFolder(ListView lv, List<FileListing> fileList)
         {
             DialogResult folderResult = folderBrowserDialog1.ShowDialog();
             if (folderResult == DialogResult.OK)
             {
                 LoadFolder(folderBrowserDialog1.SelectedPath, lv, fileList);
             }
-        }
+        }*/
 
 
 
-        private void LoadFolder(string path, ListView listView, List<FileListing> fileList)
+        /*private void LoadFolder(string path, ListView listView, List<FileListing> fileList)
         {
             listView.Items.Clear();
             fileList.Clear();
             string[] filesInFolder = Directory.GetFiles(path);
             LoadFiles(filesInFolder, listView, fileList);
-        }
+        }*/
 
 
-        private void LoadFiles(string[] files, ListView listView, List<FileListing> fileList)
+        /*private void LoadFiles(string[] files, ListView listView, List<FileListing> fileList)
         {
             foreach (string file in files)
             {
@@ -74,7 +74,7 @@ namespace FileMatch
                 //lvi.Tag = file.FullPath;
                 lvi.Tag = file;
             }
-        }
+        }*/
 
         //---------------------- new test 
         private void SelectFolder(int column, List<FileListing> fileList)
@@ -111,13 +111,19 @@ namespace FileMatch
                     fileList.Add(new FileListing(file, file));
             }
 
-            if (FileGrid.Rows.Count < fileList.Count) FileGrid.Rows.Add(fileList.Count - FileGrid.Rows.Count);
+            if (FileGrid.Rows.Count < fileList.Count)
+            {
+                FileGrid.Rows.Add(fileList.Count - FileGrid.Rows.Count);
+                
+            }
 
             for (int i = 0; i < fileList.Count; i++)
             {
                 FileGrid.Rows[i].Cells[column].Value = fileList[i].FileName;
                 FileGrid.Rows[i].Cells[column].Tag = fileList[i];
             }
+
+            //FileGrid.Rows[FileGrid.Rows.Count - 1].Height = 50; //set height on last row, doesn't get the right height based on the setting
         }
         // end new test -----------------------------
 
