@@ -53,12 +53,12 @@
             buttonClear1 = new Button();
             button1 = new Button();
             FileGrid = new DataGridView();
-            Delete1 = new DataGridViewCheckBoxColumn();
             ColumnDelete1 = new DataGridViewCheckBoxColumn();
             ColumnFileName1 = new DataGridViewTextBoxColumn();
             ColumnThumbnail = new DataGridViewImageColumn();
             ColumnDelete2 = new DataGridViewCheckBoxColumn();
             ColumnFileName2 = new DataGridViewTextBoxColumn();
+            Delete1 = new DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelForPicture.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)FileGrid).BeginInit();
@@ -258,12 +258,7 @@
             FileGrid.RowTemplate.Height = 25;
             FileGrid.Size = new Size(572, 632);
             FileGrid.TabIndex = 27;
-            // 
-            // Delete1
-            // 
-            Delete1.HeaderText = "Del";
-            Delete1.Name = "Delete1";
-            Delete1.Width = 30;
+            FileGrid.SelectionChanged += GridSelectionChange;
             // 
             // ColumnDelete1
             // 
@@ -296,6 +291,12 @@
             ColumnFileName2.Name = "ColumnFileName2";
             ColumnFileName2.ReadOnly = true;
             ColumnFileName2.Width = 200;
+            // 
+            // Delete1
+            // 
+            Delete1.HeaderText = "Del";
+            Delete1.Name = "Delete1";
+            Delete1.Width = 30;
             // 
             // Form1
             // 

@@ -440,36 +440,48 @@ namespace FileMatch
 
         #region Picture Load and Resize -----------------------------------------------------------
 
+        private void GridSelectionChange(object sender, EventArgs e)
+        {
+            if (checkBoxLoadPictureOnSingleClick.Checked)
+            {
+                DisplayPicture(sender, e);
+            }
+        }
+
         Bitmap bmp;
         private void DisplayPicture(object sender, EventArgs e)
         {
-            ListView listView = sender as ListView;
-            if (listView.SelectedItems.Count > 0)
+            DataGridView? grid = sender as DataGridView;
+            if (grid == null) return;
+            if (grid.SelectedCells.Count > 0)
             {
-                ListViewItem selected = listView.SelectedItems[0];
-                if (selected.Tag != null)
+                DataGridViewCell selected = grid.SelectedCells[0];
+                if (selected.ColumnIndex == columnFilesLeft || selected.ColumnIndex == columnFilesRight)
                 {
-                    //string fileName = selected.Tag.ToString();
-                    string fileName = (selected.Tag as FileListing).FullPath;
-                    if (File.Exists(fileName))
+                    if (selected.Tag != null)
                     {
-                        string extension = Path.GetExtension(fileName).ToLower();
-                        List<string> allowedExtensions = new List<string> { ".jpg", ".jpeg", ".bmp", ".gif", ".png", ".ico", ".tiff", ".webp" };
-                        if (allowedExtensions.Contains(extension))
+                        //string fileName = selected.Tag.ToString();
+                        string fileName = (selected.Tag as FileListing).FullPath;
+                        if (File.Exists(fileName))
                         {
-                            //method 1
-                            //pictureBox1.ImageLocation = fileName; //works with PictureBox LoadCompleted, but doesn't release memory (Dispose)
+                            string extension = Path.GetExtension(fileName).ToLower();
+                            List<string> allowedExtensions = new List<string> { ".jpg", ".jpeg", ".bmp", ".gif", ".png", ".ico", ".tiff", ".webp" };
+                            if (allowedExtensions.Contains(extension))
+                            {
+                                //method 1
+                                //pictureBox1.ImageLocation = fileName; //works with PictureBox LoadCompleted, but doesn't release memory (Dispose)
 
-                            //method 2
-                            if (bmp != null) bmp.Dispose();
-                            bmp = new Bitmap(fileName);
-                            pictureBox1.Image = bmp;
-                            PictureLoadComplete();
-                        }
-                        else
-                        {
-                            pictureBox1.Image = pictureBox1.ErrorImage;
-                            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+                                //method 2
+                                if (bmp != null) bmp.Dispose();
+                                bmp = new Bitmap(fileName);
+                                pictureBox1.Image = bmp;
+                                PictureLoadComplete();
+                            }
+                            else
+                            {
+                                pictureBox1.Image = pictureBox1.ErrorImage;
+                                pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+                            }
                         }
                     }
                 }
@@ -844,6 +856,7 @@ namespace FileMatch
             ClearSubItem(listView2 as ListView, 2);
         }*/
         #endregion -------------------------------------------------------------------------
+
 
     }
 }
