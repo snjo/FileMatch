@@ -31,54 +31,13 @@ namespace FileMatch
         List<string> fileNamesNoExt = new List<string>();
         private void buttonSelectFolder1_Click(object sender, EventArgs e)
         {
-            //SelectFolder(listView1, files1);
             SelectFolder(columnFilesLeftIndex, files1);
         }
         private void buttonSelectFolder2_Click(object sender, EventArgs e)
         {
-            //SelectFolder(listView2, files2);
             SelectFolder(columnFilesRightINdex, files2);
         }
 
-        /*private void SelectFolder(ListView lv, List<FileListing> fileList)
-        {
-            DialogResult folderResult = folderBrowserDialog1.ShowDialog();
-            if (folderResult == DialogResult.OK)
-            {
-                LoadFolder(folderBrowserDialog1.SelectedPath, lv, fileList);
-            }
-        }*/
-
-
-
-        /*private void LoadFolder(string path, ListView listView, List<FileListing> fileList)
-        {
-            listView.Items.Clear();
-            fileList.Clear();
-            string[] filesInFolder = Directory.GetFiles(path);
-            LoadFiles(filesInFolder, listView, fileList);
-        }*/
-
-
-        /*private void LoadFiles(string[] files, ListView listView, List<FileListing> fileList)
-        {
-            foreach (string file in files)
-            {
-                if (File.Exists(file))
-                    fileList.Add(new FileListing(file, file));
-            }
-
-            foreach (FileListing file in fileList)
-            {
-                ListViewItem lvi = listView.Items.Add(file.FileName);
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-                //lvi.Tag = file.FullPath;
-                lvi.Tag = file;
-            }
-        }*/
-
-        //---------------------- new test 
         private void SelectFolder(int column, List<FileListing> fileList)
         {
             DialogResult folderResult = folderBrowserDialog1.ShowDialog();
@@ -127,60 +86,15 @@ namespace FileMatch
 
             FileGrid.Rows[FileGrid.Rows.Count - 1].Height = 50; //set height on last row, doesn't get the right height based on the setting
         }
-        // end new test -----------------------------
 
-        /*private void DragDropFileOrFolder(object sender, DragEventArgs e, List<FileListing> targetFilesList)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] dropText = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (dropText != null && dropText.Length > 0)
-                {
-                    if (Directory.Exists(dropText[0]))
-                    {
-                        LoadFolder(dropText[0], (ListView)sender, targetFilesList);
-                    }
-                    else if (File.Exists(dropText[0])) { }
-                    {
-                        LoadFiles(dropText, (ListView)sender, targetFilesList);
-                    }
-                }
-            }
-        }*/
-        /*
-        private void listView1_DragDrop(object sender, DragEventArgs e)
-        {
-            List<FileListing> targetFilesList = files1;
-            DragDropFileOrFolder(sender, e, targetFilesList);
-        }
-
-        private void listView1_DragEnter(object sender, DragEventArgs e)
-        {
-            DragDropEffects d = DragDropEffects.Copy;
-            e.Effect = d;
-        }
-
-        private void listView2_DragDrop(object sender, DragEventArgs e)
-        {
-            List<FileListing> targetFilesList = files2;
-            DragDropFileOrFolder(sender, e, targetFilesList);
-        }
-
-        private void listView2_DragEnter(object sender, DragEventArgs e)
-        {
-            DragDropEffects d = DragDropEffects.Copy;
-            e.Effect = d;
-        }*/
 
         private void buttonClear1_Click(object sender, EventArgs e)
         {
-            //listView1.Items.Clear();
             ClearColumn(columnFilesLeftIndex);
             files1.Clear();
         }
         private void buttonClear2_Click(object sender, EventArgs e)
         {
-            //listView2.Items.Clear();
             ClearColumn(columnFilesRightINdex);
             files2.Clear();
         }
@@ -214,7 +128,6 @@ namespace FileMatch
 
         private void ColumnAddItems(int column, List<FileListing> newList, List<FileListing> compareToList)
         {
-            //foreach (FileListing fileListing in newList)
             for (int i = 0; i < newList.Count; i++)
             {
                 Debug.WriteLine("column " + column + ", row " + i + ".   FileGrid Rows: " + FileGrid.Rows.Count);
@@ -237,25 +150,6 @@ namespace FileMatch
                 }
             }
         }
-
-        /*private static void ListViewAddItems(List<FileListing> newList, ListView listView, List<FileListing> compareToList)
-        {
-            foreach (FileListing fileListing in newList)
-            {
-                ListViewItem lvi = listView.Items.Add(fileListing.DisplayName);
-                lvi.SubItems.Add(string.Empty);
-                lvi.SubItems.Add(string.Empty);
-                lvi.Tag = fileListing;//.FullPath;
-                if (compareToList.Contains(fileListing))
-                {
-                    lvi.ForeColor = Color.DarkBlue;
-                }
-                else
-                {
-                    lvi.ForeColor = Color.Orange;
-                }
-            }
-        }*/
 
         private void AddLines(List<FileListing> newList, string uniqueName, List<FileListing> list, int column = 0)
         {
@@ -298,60 +192,6 @@ namespace FileMatch
         }
         #endregion --------------------------------------------------------------------------------------
 
-        #region Scroll and align ------------------------------------------------------------------
-        //int scrollPosition = 0;
-        /*private void AlignViews(int position)
-        {
-            if (listView1.Items.Count > 0 && listView2.Items.Count > 0)
-            {
-                listView1.EnsureVisible(Math.Min(position, listView1.Items.Count - 1));
-                listView2.EnsureVisible(Math.Min(position, listView2.Items.Count - 1));
-                position++;
-            }
-        }*/
-        /*
-        private void buttonScrollToTop_Click(object sender, EventArgs e)
-        {
-            scrollPosition = 0;
-            AlignViews(scrollPosition);
-        }
-
-        private void buttonScrollToBottom_Click(object sender, EventArgs e)
-        {
-            scrollPosition = listView1.Items.Count - 1;
-            AlignViews(scrollPosition);
-        }*/
-        /*
-        private void buttonScrollUpMore(object sender, EventArgs e)
-        {
-            ScrollList(-10);
-        }
-
-        private void buttonScrollDownMore(object sender, EventArgs e)
-        {
-            ScrollList(10);
-        }
-
-        private void buttonScrollUp_Click(object sender, EventArgs e)
-        {
-            ScrollList(-1);
-        }
-
-        private void buttonScrollDown_Click(object sender, EventArgs e)
-        {
-            ScrollList(1);
-        }*/
-        /*
-        private void ScrollList(int amount)
-        {
-            scrollPosition += amount;
-            if (scrollPosition < 0)
-                scrollPosition = 0;
-            if (scrollPosition >= listView1.Items.Count)
-                scrollPosition = listView1.Items.Count - 1;
-            AlignViews(scrollPosition);
-        }*/
-        #endregion --------------------------------------------------------------------------------------
 
         #region Delete Files ----------------------------------------------------------------------
         private void DeleteFiles(DataGridView grid) // change to checkbox selection
@@ -376,7 +216,6 @@ namespace FileMatch
 
                     if (selected.Tag != null)
                     {
-                        //string fileName = selected.Tag.ToString();
                         string fileName = (selected.Tag as FileListing).FullPath;
                         if (File.Exists(fileName))
                         {
@@ -419,35 +258,6 @@ namespace FileMatch
         {
             DeleteFiles(FileGrid);
         }
-        /*
-        private void buttonDeletFiles1_Click(object sender, EventArgs e)
-        {
-            DeleteFiles(listView1);
-        }
-        private void buttonDeletFiles2_Click(object sender, EventArgs e)
-        {
-            DeleteFiles(listView2);
-        }
-
-        private void buttonDelete1_MouseEnter(object sender, EventArgs e)
-        {
-            listView1.BackColor = Color.Yellow;
-        }
-
-        private void buttonDelete1_MouseLeave(object sender, EventArgs e)
-        {
-            listView1.BackColor = Color.White;
-        }
-
-        private void buttonDelete2_MouseEnter(object sender, EventArgs e)
-        {
-            listView2.BackColor = Color.Yellow;
-        }
-
-        private void buttonDelete2_MouseLeave(object sender, EventArgs e)
-        {
-            listView2.BackColor = Color.White;
-        }*/
         #endregion ------------------------------------------------------------------------
 
         #region Picture Load and Resize -----------------------------------------------------------
@@ -473,7 +283,6 @@ namespace FileMatch
                 {
                     if (selected.Tag != null)
                     {
-                        //string fileName = selected.Tag.ToString();
                         string fileName = (selected.Tag as FileListing).FullPath;
                         if (File.Exists(fileName))
                         {
@@ -488,28 +297,7 @@ namespace FileMatch
                                 if (bmp != null) bmp.Dispose();
                                 bmp = new Bitmap(fileName);
 
-                                if (bmp.PropertyIdList.Contains(exifOrientationID)) // check for rotated image
-                                {
-                                    var prop = bmp.GetPropertyItem(exifOrientationID);
-                                    int val = BitConverter.ToUInt16(prop.Value, 0);
-                                    var rot = RotateFlipType.RotateNoneFlipNone;
-
-                                    if (val == 3 || val == 4)
-                                        rot = RotateFlipType.Rotate180FlipNone;
-                                    else if (val == 5 || val == 6)
-                                        rot = RotateFlipType.Rotate90FlipNone;
-                                    else if (val == 7 || val == 8)
-                                        rot = RotateFlipType.Rotate270FlipNone;
-
-                                    if (val == 2 || val == 4 || val == 5 || val == 7)
-                                        rot |= RotateFlipType.RotateNoneFlipX;
-
-                                    if (rot != RotateFlipType.RotateNoneFlipNone)
-                                    {
-                                        bmp.RotateFlip(rot);
-                                        bmp.RemovePropertyItem(exifOrientationID);
-                                    }
-                                }
+                                RotateImageFromExifData(bmp);
 
                                 pictureBox1.Image = bmp;
                                 PictureLoadComplete(sender);
@@ -526,6 +314,34 @@ namespace FileMatch
             }
         }
 
+        private void RotateImageFromExifData(Bitmap image)
+        {
+            // Image rotation based on EXIF data https://stackoverflow.com/questions/27835064/get-image-orientation-and-rotate-as-per-orientation
+            if (!image.PropertyIdList.Contains(exifOrientationID)) return;
+
+            PropertyItem? prop = image.GetPropertyItem(exifOrientationID);
+
+            int val = BitConverter.ToUInt16(prop.Value, 0);
+            RotateFlipType rot = RotateFlipType.RotateNoneFlipNone;
+
+            if (val == 3 || val == 4)
+                rot = RotateFlipType.Rotate180FlipNone;
+            else if (val == 5 || val == 6)
+                rot = RotateFlipType.Rotate90FlipNone;
+            else if (val == 7 || val == 8)
+                rot = RotateFlipType.Rotate270FlipNone;
+
+            if (val == 2 || val == 4 || val == 5 || val == 7)
+                rot |= RotateFlipType.RotateNoneFlipX;
+
+            if (rot != RotateFlipType.RotateNoneFlipNone)
+            {
+                image.RotateFlip(rot);
+                image.RemovePropertyItem(exifOrientationID);
+            }
+            
+        }
+
         private void pictureBox1_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             //PictureLoadComplete(sender);
@@ -536,7 +352,6 @@ namespace FileMatch
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.Top = 0;
             pictureBox1.Left = 0;
-            //MessageBox.Show(bmp.Width + ", " + bmp.Height + " / " + pictureBox1.Image.Width + ", " + pictureBox1.Image.Height);
             PictureZoomFit();
             UpdatePictureFocusPoint();
             SetThumbnail(((DataGridView)sender).SelectedCells[0]);
@@ -683,13 +498,12 @@ namespace FileMatch
         private void PictureDragStart(int x, int y)
         {
             dragActive = true;
-            dragPosition = new Vector2(x, y);// + dragCurrent;
+            dragPosition = new Vector2(x, y);
         }
 
         private void PictureDragStop()
         {
             dragActive = false;
-            //dragPosition = dragCurrent;
         }
         #endregion -------------------------------------------------------------------------------------
 
@@ -764,9 +578,7 @@ namespace FileMatch
             pictureBox1.Left = 0;
             pictureBox1.Top = 0;
 
-            PictureZoom(Math.Min(zoomFitX, zoomFitY)); // bugged, sends 0f
-
-            //PictureZoom(0.01f);
+            PictureZoom(Math.Min(zoomFitX, zoomFitY));
         }
 
         private void ZoomPlus()
@@ -828,17 +640,6 @@ namespace FileMatch
         #endregion -------------------------------------------------------------------------------------
 
         #region File Match ------------------------------------------------------------------------
-        /*
-        private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            //SelectItemHighlightMatches(listView1, listView2);
-            StartMatchingTimer(listView1, listView2);
-        }
-
-        private void listView2_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            StartMatchingTimer(listView2, listView1);
-        }*/
 
         private void StartMatchingTimer(ListView lv1, ListView lv2)
         {
@@ -859,53 +660,8 @@ namespace FileMatch
         {
             markMatchStarted = false;
             timerMarkMatches.Stop();
-            //SelectItemHighlightMatches(matchList1, matchList2);
         }
 
-        /*
-        private void SelectItemHighlightMatches(ListView lv1, ListView lv2)
-        {
-            if (!checkBoxMarkMatches.Checked) return;
-            if (lv1.SelectedItems.Count > 0)
-            {
-                ClearSubItem(lv1, 2);
-                ClearSubItem(lv2, 2);
-                int selectNumber = 1;
-
-                foreach (ListViewItem item1 in lv1.SelectedItems)
-                {
-                    if (item1.SubItems.Count < 2) item1.SubItems.Add("");
-                    if (item1.SubItems.Count < 3) item1.SubItems.Add("");
-                    //string name1 = Path.GetFileNameWithoutExtension(item1.Tag.ToString());
-                    string name1 = (item1.Tag as FileListing).FileNameWithoutExtension;
-                    bool found = false;
-
-
-                    foreach (ListViewItem item2 in lv2.Items)
-                    {
-                        //if (item1.Text != "...")
-                        if (!(item1.Tag as FileListing).Empty)
-                        {
-                            string name2 = (item2.Tag as FileListing).FileNameWithoutExtension;
-                            if (name1 == name2)
-                            {
-                                item1.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B9C";
-                                item2.SubItems[2].Text = "=" + selectNumber + "="; //"\u2B05";
-                                selectNumber++;
-                                found = true;
-                                break;
-                            }
-
-                        }
-                    }
-                    if (!found)
-                    {
-                        item1.SubItems[2].Text = "X";
-                    }
-
-                }
-            }
-        }*/
 
         private static void ClearSubItem(ListView lv1, int num)
         {
@@ -915,14 +671,6 @@ namespace FileMatch
                     lvi.SubItems[num].Text = "";
             }
         }
-        /*
-        private void checkBoxMarkMatches_CheckedChanged(object sender, EventArgs e)
-        {
-            ClearSubItem(listView1 as ListView, 1);
-            ClearSubItem(listView1 as ListView, 2);
-            ClearSubItem(listView2 as ListView, 1);
-            ClearSubItem(listView2 as ListView, 2);
-        }*/
         #endregion -------------------------------------------------------------------------
 
 
