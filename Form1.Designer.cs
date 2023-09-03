@@ -53,12 +53,10 @@
             buttonClear1 = new Button();
             button1 = new Button();
             FileGrid = new DataGridView();
-            ColumnDelete1 = new DataGridViewCheckBoxColumn();
-            ColumnFileName1 = new DataGridViewTextBoxColumn();
-            ColumnThumbnail = new DataGridViewImageColumn();
-            ColumnDelete2 = new DataGridViewCheckBoxColumn();
-            ColumnFileName2 = new DataGridViewTextBoxColumn();
             Delete1 = new DataGridViewCheckBoxColumn();
+            ColumnFileName1 = new DataGridViewTextBoxColumn();
+            ColumnThumbnail1 = new DataGridViewImageColumn();
+            ColumnFileName2 = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelForPicture.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)FileGrid).BeginInit();
@@ -91,7 +89,7 @@
             // 
             // buttonSelectFolder2
             // 
-            buttonSelectFolder2.Location = new Point(384, 12);
+            buttonSelectFolder2.Location = new Point(290, 12);
             buttonSelectFolder2.Name = "buttonSelectFolder2";
             buttonSelectFolder2.Size = new Size(107, 23);
             buttonSelectFolder2.TabIndex = 2;
@@ -105,7 +103,7 @@
             pictureBox1.ErrorImage = (Image)resources.GetObject("pictureBox1.ErrorImage");
             pictureBox1.Location = new Point(3, 3);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(815, 632);
+            pictureBox1.Size = new Size(908, 632);
             pictureBox1.TabIndex = 4;
             pictureBox1.TabStop = false;
             pictureBox1.LoadCompleted += pictureBox1_LoadCompleted;
@@ -142,14 +140,14 @@
             panelForPicture.AutoScroll = true;
             panelForPicture.BackColor = Color.Black;
             panelForPicture.Controls.Add(pictureBox1);
-            panelForPicture.Location = new Point(590, 41);
+            panelForPicture.Location = new Point(497, 41);
             panelForPicture.Name = "panelForPicture";
-            panelForPicture.Size = new Size(821, 638);
+            panelForPicture.Size = new Size(914, 638);
             panelForPicture.TabIndex = 14;
             // 
             // buttonZoom100
             // 
-            buttonZoom100.Location = new Point(593, 12);
+            buttonZoom100.Location = new Point(500, 12);
             buttonZoom100.Name = "buttonZoom100";
             buttonZoom100.Size = new Size(53, 23);
             buttonZoom100.TabIndex = 15;
@@ -159,7 +157,7 @@
             // 
             // buttonZoomFit
             // 
-            buttonZoomFit.Location = new Point(652, 12);
+            buttonZoomFit.Location = new Point(559, 12);
             buttonZoomFit.Name = "buttonZoomFit";
             buttonZoomFit.Size = new Size(39, 23);
             buttonZoomFit.TabIndex = 16;
@@ -169,7 +167,7 @@
             // 
             // buttonZoomPlus
             // 
-            buttonZoomPlus.Location = new Point(697, 12);
+            buttonZoomPlus.Location = new Point(604, 12);
             buttonZoomPlus.Name = "buttonZoomPlus";
             buttonZoomPlus.Size = new Size(39, 23);
             buttonZoomPlus.TabIndex = 17;
@@ -179,7 +177,7 @@
             // 
             // buttonZoomMinus
             // 
-            buttonZoomMinus.Location = new Point(742, 12);
+            buttonZoomMinus.Location = new Point(649, 12);
             buttonZoomMinus.Name = "buttonZoomMinus";
             buttonZoomMinus.Size = new Size(39, 23);
             buttonZoomMinus.TabIndex = 18;
@@ -209,7 +207,7 @@
             // labelZoom
             // 
             labelZoom.AutoSize = true;
-            labelZoom.Location = new Point(798, 16);
+            labelZoom.Location = new Point(703, 16);
             labelZoom.Name = "labelZoom";
             labelZoom.Size = new Size(39, 15);
             labelZoom.TabIndex = 21;
@@ -221,7 +219,7 @@
             checkBoxLoadPictureOnSingleClick.AutoSize = true;
             checkBoxLoadPictureOnSingleClick.Checked = true;
             checkBoxLoadPictureOnSingleClick.CheckState = CheckState.Checked;
-            checkBoxLoadPictureOnSingleClick.Location = new Point(593, 685);
+            checkBoxLoadPictureOnSingleClick.Location = new Point(497, 685);
             checkBoxLoadPictureOnSingleClick.Name = "checkBoxLoadPictureOnSingleClick";
             checkBoxLoadPictureOnSingleClick.Size = new Size(231, 19);
             checkBoxLoadPictureOnSingleClick.TabIndex = 24;
@@ -240,7 +238,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(497, 12);
+            button1.Location = new Point(403, 12);
             button1.Name = "button1";
             button1.Size = new Size(56, 23);
             button1.TabIndex = 26;
@@ -251,20 +249,20 @@
             // FileGrid
             // 
             FileGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            FileGrid.Columns.AddRange(new DataGridViewColumn[] { ColumnDelete1, ColumnFileName1, ColumnThumbnail, ColumnDelete2, ColumnFileName2 });
+            FileGrid.Columns.AddRange(new DataGridViewColumn[] { ColumnFileName1, ColumnThumbnail1, ColumnFileName2 });
             FileGrid.Location = new Point(12, 44);
             FileGrid.Name = "FileGrid";
             FileGrid.RowHeadersVisible = false;
             FileGrid.RowTemplate.Height = 50;
-            FileGrid.Size = new Size(572, 632);
+            FileGrid.Size = new Size(479, 632);
             FileGrid.TabIndex = 27;
             FileGrid.SelectionChanged += GridSelectionChange;
             // 
-            // ColumnDelete1
+            // Delete1
             // 
-            ColumnDelete1.HeaderText = "Del";
-            ColumnDelete1.Name = "ColumnDelete1";
-            ColumnDelete1.Width = 30;
+            Delete1.HeaderText = "Del";
+            Delete1.Name = "Delete1";
+            Delete1.Width = 30;
             // 
             // ColumnFileName1
             // 
@@ -273,17 +271,11 @@
             ColumnFileName1.ReadOnly = true;
             ColumnFileName1.Width = 200;
             // 
-            // ColumnThumbnail
+            // ColumnThumbnail1
             // 
-            ColumnThumbnail.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            ColumnThumbnail.HeaderText = "Thumbnail";
-            ColumnThumbnail.Name = "ColumnThumbnail";
-            // 
-            // ColumnDelete2
-            // 
-            ColumnDelete2.HeaderText = "Del";
-            ColumnDelete2.Name = "ColumnDelete2";
-            ColumnDelete2.Width = 30;
+            ColumnThumbnail1.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            ColumnThumbnail1.HeaderText = "Thumbnail";
+            ColumnThumbnail1.Name = "ColumnThumbnail1";
             // 
             // ColumnFileName2
             // 
@@ -291,12 +283,6 @@
             ColumnFileName2.Name = "ColumnFileName2";
             ColumnFileName2.ReadOnly = true;
             ColumnFileName2.Width = 200;
-            // 
-            // Delete1
-            // 
-            Delete1.HeaderText = "Del";
-            Delete1.Name = "Delete1";
-            Delete1.Width = 30;
             // 
             // Form1
             // 
@@ -352,10 +338,8 @@
         private Button button1;
         private DataGridView FileGrid;
         private DataGridViewCheckBoxColumn Delete1;
-        private DataGridViewCheckBoxColumn ColumnDelete1;
         private DataGridViewTextBoxColumn ColumnFileName1;
-        private DataGridViewImageColumn ColumnThumbnail;
-        private DataGridViewCheckBoxColumn ColumnDelete2;
+        private DataGridViewImageColumn ColumnThumbnail1;
         private DataGridViewTextBoxColumn ColumnFileName2;
     }
 }

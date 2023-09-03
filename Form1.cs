@@ -16,8 +16,10 @@ namespace FileMatch
     public partial class Form1 : Form
     {
 
-        int columnFilesLeft = 1;
-        int columnFilesRight = 4;
+        int columnFilesLeftIndex = 0;
+        int columnThumbnailIndex = 1;
+        int columnFilesRightINdex = 2;
+
         public Form1()
         {
             InitializeComponent();
@@ -30,12 +32,12 @@ namespace FileMatch
         private void buttonSelectFolder1_Click(object sender, EventArgs e)
         {
             //SelectFolder(listView1, files1);
-            SelectFolder(columnFilesLeft, files1);
+            SelectFolder(columnFilesLeftIndex, files1);
         }
         private void buttonSelectFolder2_Click(object sender, EventArgs e)
         {
             //SelectFolder(listView2, files2);
-            SelectFolder(columnFilesRight, files2);
+            SelectFolder(columnFilesRightINdex, files2);
         }
 
         /*private void SelectFolder(ListView lv, List<FileListing> fileList)
@@ -114,7 +116,7 @@ namespace FileMatch
             if (FileGrid.Rows.Count < fileList.Count)
             {
                 FileGrid.Rows.Add(fileList.Count - FileGrid.Rows.Count);
-                
+
             }
 
             for (int i = 0; i < fileList.Count; i++)
@@ -123,7 +125,7 @@ namespace FileMatch
                 FileGrid.Rows[i].Cells[column].Tag = fileList[i];
             }
 
-            //FileGrid.Rows[FileGrid.Rows.Count - 1].Height = 50; //set height on last row, doesn't get the right height based on the setting
+            FileGrid.Rows[FileGrid.Rows.Count - 1].Height = 50; //set height on last row, doesn't get the right height based on the setting
         }
         // end new test -----------------------------
 
@@ -173,13 +175,13 @@ namespace FileMatch
         private void buttonClear1_Click(object sender, EventArgs e)
         {
             //listView1.Items.Clear();
-            ClearColumn(columnFilesLeft);
+            ClearColumn(columnFilesLeftIndex);
             files1.Clear();
         }
         private void buttonClear2_Click(object sender, EventArgs e)
         {
             //listView2.Items.Clear();
-            ClearColumn(columnFilesRight);
+            ClearColumn(columnFilesRightINdex);
             files2.Clear();
         }
         #endregion ---------------------------------------------------------------------------------------
@@ -197,17 +199,17 @@ namespace FileMatch
 
             foreach (string uniqueName in fileNamesNoExt)
             {
-                AddLines(newList1, uniqueName, files1, columnFilesLeft);//AddLines(newList1, uniqueName, files1);
-                AddLines(newList2, uniqueName, files2, columnFilesRight);
+                AddLines(newList1, uniqueName, files1, columnFilesLeftIndex);//AddLines(newList1, uniqueName, files1);
+                AddLines(newList2, uniqueName, files2, columnFilesRightINdex);
             }
 
-            ClearColumn(columnFilesLeft);
-            ClearColumn(columnFilesRight);
+            ClearColumn(columnFilesLeftIndex);
+            ClearColumn(columnFilesRightINdex);
 
             ListView lvx = new ListView();
 
-            ColumnAddItems(columnFilesLeft, newList1, newList2);
-            ColumnAddItems(columnFilesRight, newList2, newList1);
+            ColumnAddItems(columnFilesLeftIndex, newList1, newList2);
+            ColumnAddItems(columnFilesRightINdex, newList2, newList1);
         }
 
         private void ColumnAddItems(int column, List<FileListing> newList, List<FileListing> compareToList)
@@ -216,6 +218,10 @@ namespace FileMatch
             for (int i = 0; i < newList.Count; i++)
             {
                 Debug.WriteLine("column " + column + ", row " + i + ".   FileGrid Rows: " + FileGrid.Rows.Count);
+                if (FileGrid.Rows.Count <= i)
+                {
+                    FileGrid.Rows.Add();
+                }
                 DataGridViewRow row = FileGrid.Rows[i];
                 DataGridViewCell cell = row.Cells[column];
                 cell.Value = newList[i].DisplayName;
@@ -364,7 +370,7 @@ namespace FileMatch
 
             foreach (DataGridViewCell selected in grid.SelectedCells)
             {
-                if (selected.ColumnIndex == columnFilesLeft || selected.ColumnIndex == columnFilesRight)
+                if (selected.ColumnIndex == columnFilesLeftIndex || selected.ColumnIndex == columnFilesRightINdex)
                 {
                     bool deleted = false;
 
@@ -463,7 +469,7 @@ namespace FileMatch
             if (grid.SelectedCells.Count > 0)
             {
                 DataGridViewCell selected = grid.SelectedCells[0];
-                if (selected.ColumnIndex == columnFilesLeft || selected.ColumnIndex == columnFilesRight)
+                if (selected.ColumnIndex == columnFilesLeftIndex || selected.ColumnIndex == columnFilesRightINdex)
                 {
                     if (selected.Tag != null)
                     {
@@ -539,7 +545,7 @@ namespace FileMatch
         private Vector2 thumbSize = new Vector2(50, 50);
         private void SetThumbnail(DataGridViewCell cell)
         {
-            ((DataGridViewImageCell)cell.OwningRow.Cells[2]).Value = CreateThumbnail(bmp, thumbSize);
+            ((DataGridViewImageCell)cell.OwningRow.Cells[columnThumbnailIndex]).Value = CreateThumbnail(bmp, thumbSize);
         }
 
 
