@@ -117,6 +117,7 @@
             // buttonDelete1
             // 
             buttonDelete1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonDelete1.ForeColor = Color.DarkRed;
             buttonDelete1.Location = new Point(125, 682);
             buttonDelete1.Name = "buttonDelete1";
             buttonDelete1.Size = new Size(107, 23);
@@ -291,6 +292,7 @@
             // 
             // buttonOpenFile
             // 
+            buttonOpenFile.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonOpenFile.Location = new Point(403, 682);
             buttonOpenFile.Name = "buttonOpenFile";
             buttonOpenFile.Size = new Size(88, 23);
