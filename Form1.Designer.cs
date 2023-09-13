@@ -248,6 +248,7 @@
             // 
             // FileGrid
             // 
+            FileGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             FileGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             FileGrid.Columns.AddRange(new DataGridViewColumn[] { ColumnFileName1, ColumnThumbnail1, ColumnFileName2 });
             FileGrid.Location = new Point(12, 44);
@@ -257,6 +258,7 @@
             FileGrid.Size = new Size(479, 632);
             FileGrid.TabIndex = 27;
             FileGrid.SelectionChanged += GridSelectionChange;
+            FileGrid.KeyDown += FileGrid_KeyDown;
             // 
             // ColumnFileName1
             // 

@@ -202,7 +202,19 @@ namespace FileMatch
                 return;
             }
 
-            DialogResult confirmDelete = MessageBox.Show("Delete " + grid.SelectedCells.Count + " files?", "Delete files", MessageBoxButtons.OKCancel);
+            //check if any of the selected cells contain an actual file
+            int validCells = 0;
+            foreach (DataGridViewCell selected in grid.SelectedCells)
+            {
+                if (selected.Tag != null)
+                {
+                    if ((selected.Tag.ToString()+"").Length > 0)
+                        validCells++;
+                }
+            }
+            if (validCells == 0) return;
+
+            DialogResult confirmDelete = MessageBox.Show("Delete " + validCells + " files?", "Delete files", MessageBoxButtons.OKCancel);
             if (confirmDelete != DialogResult.OK) return;
 
             string errorFiles = string.Empty;
@@ -257,6 +269,14 @@ namespace FileMatch
         private void buttonDelete_Click(object sender, EventArgs e)
         {
             DeleteFiles(FileGrid);
+        }
+
+        private void FileGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                DeleteFiles(FileGrid);
+            }
         }
         #endregion ------------------------------------------------------------------------
 
@@ -665,14 +685,8 @@ namespace FileMatch
 
         private static void ClearSubItem(ListView lv1, int num)
         {
-            foreach (ListViewItem lvi in lv1.Items) // clear old markings
-            {
-                if (lvi.SubItems.Count > num)
-                    lvi.SubItems[num].Text = "";
-            }
+
         }
         #endregion -------------------------------------------------------------------------
-
-
     }
 }
