@@ -472,18 +472,6 @@ namespace FileMatch
             }
         }
 
-        private void pictureBox1_MouseWheel(object sender, MouseEventArgs e)
-        {
-            if (e.Delta > 0)
-            {
-                ZoomPlus();
-            }
-            if (e.Delta < 0)
-            {
-                ZoomMinus();
-            }
-        }
-
         #endregion -----------------------------------------------------------------------------------------------
 
         #region Open File Externally -----------------------------------------------------------------
@@ -584,8 +572,9 @@ namespace FileMatch
         #region Zoom Picture ----------------------------------------------------------------------
 
         float currentZoom = 1f;
-        private void PictureZoom(float zoom)
+        private void PictureZoom(float zoom, bool useMousePosition = false)
         {
+            if (pictureBox1.Image == null) return;
 
             UpdatePictureFocusPoint();
             Vector2 pictureBoxSize = new Vector2(
@@ -598,8 +587,13 @@ namespace FileMatch
             Vector2 pictureBoxHalf = new Vector2(pictureBox1.Width / 2, pictureBox1.Height / 2);
             Vector2 panelSize = new Vector2(panelForPicture.Width, panelForPicture.Height);
             Vector2 panelHalf = panelSize / 2;
+            Point mousePos = panelForPicture.PointToClient(Cursor.Position);
+            Vector2 mouseOffset = new Vector2(mousePos.X, mousePos.Y) - panelHalf;
+            if (!useMousePosition) mouseOffset = Vector2.Zero;
+            //test
+            this.Text = "p: " + panelHalf.X + "/" + panelHalf.Y + "   m: " + mouseOffset.X + " / " + mouseOffset.Y;
 
-            Vector2 pictureBoxLocation = -pictureBoxHalf + panelHalf + (pictureFocusPoint * pictureBoxSize);
+            Vector2 pictureBoxLocation = -pictureBoxHalf + panelHalf + (pictureFocusPoint * pictureBoxSize) - mouseOffset;
 
             pictureBox1.Left = (int)pictureBoxLocation.X;
             pictureBox1.Top = (int)pictureBoxLocation.Y;
@@ -655,7 +649,7 @@ namespace FileMatch
             PictureZoom(Math.Min(zoomFitX, zoomFitY));
         }
 
-        private void ZoomPlus()
+        private void ZoomPlus(bool useMousePosition = false)
         {
             if (currentZoom >= 0.25f)
             {
@@ -669,10 +663,10 @@ namespace FileMatch
 
             if (currentZoom > 4f) currentZoom = 4f;
 
-            PictureZoom(currentZoom);
+            PictureZoom(currentZoom, useMousePosition);
         }
 
-        private void ZoomMinus()
+        private void ZoomMinus(bool useMousePosition = false)
         {
             if (currentZoom <= 0.25f)
             {
@@ -689,7 +683,7 @@ namespace FileMatch
                 currentZoom = 0.1f;
                 PictureZoomFit();
             }
-            PictureZoom(currentZoom);
+            PictureZoom(currentZoom, useMousePosition);
         }
 
         private void buttonZoomPlus_Click(object sender, EventArgs e)
@@ -710,6 +704,18 @@ namespace FileMatch
         private void buttonZoomFit_Click(object sender, EventArgs e)
         {
             PictureZoomFit();
+        }
+
+        private void pictureBox1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                ZoomPlus(true);
+            }
+            if (e.Delta < 0)
+            {
+                ZoomMinus(true);
+            }
         }
         #endregion -------------------------------------------------------------------------------------
 
