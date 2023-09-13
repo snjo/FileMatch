@@ -452,6 +452,18 @@ namespace FileMatch
             }
         }
 
+        private void pictureBox1_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                ZoomPlus();
+            }
+            if (e.Delta < 0)
+            {
+                ZoomMinus();
+            }
+        }
+
         #endregion -----------------------------------------------------------------------------------------------
 
         #region Drag Picture ----------------------------------------------------------------------

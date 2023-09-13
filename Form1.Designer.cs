@@ -111,6 +111,7 @@
             pictureBox1.MouseLeave += pictureBox1_MouseLeave;
             pictureBox1.MouseMove += pictureBox1_MouseMove;
             pictureBox1.MouseUp += pictureBox1_MouseUp;
+            pictureBox1.MouseWheel += pictureBox1_MouseWheel;
             // 
             // buttonDelete1
             // 
