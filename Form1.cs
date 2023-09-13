@@ -339,7 +339,7 @@ namespace FileMatch
                 image.RotateFlip(rot);
                 image.RemovePropertyItem(exifOrientationID);
             }
-            
+
         }
 
         private void pictureBox1_LoadCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
