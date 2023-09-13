@@ -192,8 +192,36 @@ namespace FileMatch
         }
         #endregion --------------------------------------------------------------------------------------
 
-
         #region Delete Files ----------------------------------------------------------------------
+
+        public int ValidSelectedFilesCount(DataGridView grid)
+        {
+            int validCells = 0;
+            foreach (DataGridViewCell selected in grid.SelectedCells)
+            {
+                if (selected.Tag != null)
+                {
+                    string fileName = (((FileListing)selected.Tag).FullPath);
+                    if (fileName.Length > 0)
+                        validCells++;
+                }
+            }
+            return validCells;
+        }
+
+        public List<FileListing> ValidSelectedFiles(DataGridView grid)
+        {
+            List<FileListing> validFiles = new List<FileListing>();
+            foreach (DataGridViewCell selected in grid.SelectedCells)
+            {
+                if (selected.Tag != null)
+                {
+                    validFiles.Add((FileListing)selected.Tag);
+                }
+            }
+            return validFiles;
+        }
+
         private void DeleteFiles(DataGridView grid) // change to checkbox selection
         {
             if (grid.SelectedCells.Count == 0)
@@ -203,15 +231,7 @@ namespace FileMatch
             }
 
             //check if any of the selected cells contain an actual file
-            int validCells = 0;
-            foreach (DataGridViewCell selected in grid.SelectedCells)
-            {
-                if (selected.Tag != null)
-                {
-                    if ((selected.Tag.ToString()+"").Length > 0)
-                        validCells++;
-                }
-            }
+            int validCells = ValidSelectedFilesCount(grid);
             if (validCells == 0) return;
 
             DialogResult confirmDelete = MessageBox.Show("Delete " + validCells + " files?", "Delete files", MessageBoxButtons.OKCancel);
@@ -466,6 +486,28 @@ namespace FileMatch
 
         #endregion -----------------------------------------------------------------------------------------------
 
+        #region Open File Externally -----------------------------------------------------------------
+        private void buttonOpenFile_Click(object sender, EventArgs e)
+        {
+            OpenFileExternally();
+        }
+
+        private void OpenFileExternally()
+        {
+            List<FileListing> files = ValidSelectedFiles(FileGrid);
+            if (files.Count == 0) return;
+            if (files[0] != null)
+            {
+                new Process { StartInfo = new ProcessStartInfo(files[0].FullPath) { UseShellExecute = true } }.Start();
+            }
+        }
+
+        private void FileGrid_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            OpenFileExternally();
+        }
+        #endregion
+
         #region Drag Picture ----------------------------------------------------------------------
         Vector2 pictureFocusPoint = new Vector2(0f, 0f);
 
@@ -700,5 +742,7 @@ namespace FileMatch
 
         }
         #endregion -------------------------------------------------------------------------
+
+
     }
 }

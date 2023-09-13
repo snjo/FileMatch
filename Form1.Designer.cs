@@ -57,6 +57,7 @@
             ColumnThumbnail1 = new DataGridViewImageColumn();
             ColumnFileName2 = new DataGridViewTextBoxColumn();
             Delete1 = new DataGridViewCheckBoxColumn();
+            buttonOpenFile = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panelForPicture.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)FileGrid).BeginInit();
@@ -260,6 +261,7 @@
             FileGrid.TabIndex = 27;
             FileGrid.SelectionChanged += GridSelectionChange;
             FileGrid.KeyDown += FileGrid_KeyDown;
+            FileGrid.MouseDoubleClick += FileGrid_MouseDoubleClick;
             // 
             // ColumnFileName1
             // 
@@ -287,11 +289,22 @@
             Delete1.Name = "Delete1";
             Delete1.Width = 30;
             // 
+            // buttonOpenFile
+            // 
+            buttonOpenFile.Location = new Point(403, 682);
+            buttonOpenFile.Name = "buttonOpenFile";
+            buttonOpenFile.Size = new Size(88, 23);
+            buttonOpenFile.TabIndex = 28;
+            buttonOpenFile.Text = "Open File";
+            buttonOpenFile.UseVisualStyleBackColor = true;
+            buttonOpenFile.Click += buttonOpenFile_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1423, 717);
+            Controls.Add(buttonOpenFile);
             Controls.Add(FileGrid);
             Controls.Add(button1);
             Controls.Add(buttonClear1);
@@ -345,5 +358,6 @@
         private DataGridViewTextBoxColumn ColumnFileName1;
         private DataGridViewImageColumn ColumnThumbnail1;
         private DataGridViewTextBoxColumn ColumnFileName2;
+        private Button buttonOpenFile;
     }
 }

@@ -28,6 +28,8 @@ namespace FileMatch
             DisplayName = displayName;
         }
 
+        
+
         public FileListing(string filePath, string displayName)
         {
             Folder = Path.GetDirectoryName(filePath);
