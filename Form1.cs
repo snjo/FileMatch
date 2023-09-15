@@ -18,7 +18,15 @@ namespace FileMatch
 
         int columnFilesLeftIndex = 0;
         int columnThumbnailIndex = 1;
-        int columnFilesRightINdex = 2;
+        int columnFilesRightIndex = 2;
+        Color CellDefaultBackColor = Color.White;
+        Color CellDefaultForeColor = Color.Black;
+        Color CellMatchtBackColor = Color.White;
+        Color CellMatchtForeColor = Color.Blue;
+        Color CellNoMatchtBackColor = Color.White;
+        Color CellNoMatchtForeColor = Color.Orange;
+        Color CellDeletedBackColor = Color.LightPink;
+        Color CellDeletedForeColor = Color.DarkRed;
 
         public Form1()
         {
@@ -35,7 +43,7 @@ namespace FileMatch
         }
         private void buttonSelectFolder2_Click(object sender, EventArgs e)
         {
-            SelectFolder(columnFilesRightINdex, files2);
+            SelectFolder(columnFilesRightIndex, files2);
         }
 
         private void SelectFolder(int column, List<FileListing> fileList)
@@ -49,6 +57,7 @@ namespace FileMatch
         private void LoadFolder(string path, int column, List<FileListing> fileList)
         {
             ClearColumn(column);
+            ClearColumn(columnThumbnailIndex);
 
             fileList.Clear();
 
@@ -61,6 +70,9 @@ namespace FileMatch
             foreach (DataGridViewRow row in FileGrid.Rows)
             {
                 row.Cells[column].Value = null;
+                row.Cells[column].Tag = null;
+                row.Cells[column].Style.BackColor = CellDefaultBackColor;
+                row.Cells[column].Style.ForeColor = CellDefaultForeColor;
             }
         }
 
@@ -91,11 +103,13 @@ namespace FileMatch
         private void buttonClear1_Click(object sender, EventArgs e)
         {
             ClearColumn(columnFilesLeftIndex);
+            ClearColumn(columnThumbnailIndex);
             files1.Clear();
         }
         private void buttonClear2_Click(object sender, EventArgs e)
         {
-            ClearColumn(columnFilesRightINdex);
+            ClearColumn(columnFilesRightIndex);
+            ClearColumn(columnThumbnailIndex);
             files2.Clear();
         }
         #endregion ---------------------------------------------------------------------------------------
@@ -114,16 +128,17 @@ namespace FileMatch
             foreach (string uniqueName in fileNamesNoExt)
             {
                 AddLines(newList1, uniqueName, files1, columnFilesLeftIndex);//AddLines(newList1, uniqueName, files1);
-                AddLines(newList2, uniqueName, files2, columnFilesRightINdex);
+                AddLines(newList2, uniqueName, files2, columnFilesRightIndex);
             }
 
             ClearColumn(columnFilesLeftIndex);
-            ClearColumn(columnFilesRightINdex);
+            ClearColumn(columnFilesRightIndex);
+            ClearColumn(columnThumbnailIndex);
 
             ListView lvx = new ListView();
 
             ColumnAddItems(columnFilesLeftIndex, newList1, newList2);
-            ColumnAddItems(columnFilesRightINdex, newList2, newList1);
+            ColumnAddItems(columnFilesRightIndex, newList2, newList1);
         }
 
         private void ColumnAddItems(int column, List<FileListing> newList, List<FileListing> compareToList)
@@ -142,11 +157,13 @@ namespace FileMatch
 
                 if (compareToList.Contains(newList[i]))
                 {
-                    cell.Style.ForeColor = Color.DarkBlue;
+                    cell.Style.BackColor = CellMatchtBackColor;
+                    cell.Style.ForeColor = CellMatchtForeColor;
                 }
                 else
                 {
-                    cell.Style.ForeColor = Color.Orange;
+                    cell.Style.BackColor = CellNoMatchtBackColor;
+                    cell.Style.ForeColor = CellNoMatchtForeColor;
                 }
             }
         }
@@ -242,7 +259,7 @@ namespace FileMatch
 
             foreach (DataGridViewCell selected in grid.SelectedCells)
             {
-                if (selected.ColumnIndex == columnFilesLeftIndex || selected.ColumnIndex == columnFilesRightINdex)
+                if (selected.ColumnIndex == columnFilesLeftIndex || selected.ColumnIndex == columnFilesRightIndex)
                 {
                     bool deleted = false;
 
@@ -275,14 +292,16 @@ namespace FileMatch
 
                     if (deleted)
                     {
-                        selected.Style.BackColor = Color.LightPink;
-                        selected.Style.ForeColor = Color.DarkRed;
+                        selected.Style.BackColor = CellDeletedBackColor;
+                        selected.Style.ForeColor = CellDeletedForeColor;
                     }
                 }
             }
             if (error)
             {
-                MessageBox.Show("Couldn't delete files: " + Environment.NewLine + errorFiles);
+                MessageBox.Show("Couldn't delete files: " + Environment.NewLine + errorFiles + "\nClosing the open files. Try again");
+                bmp.Dispose();
+                pictureBox1.Image = null;
             }
         }
 
@@ -319,7 +338,7 @@ namespace FileMatch
             if (grid.SelectedCells.Count > 0)
             {
                 DataGridViewCell selected = grid.SelectedCells[0];
-                if (selected.ColumnIndex == columnFilesLeftIndex || selected.ColumnIndex == columnFilesRightINdex)
+                if (selected.ColumnIndex == columnFilesLeftIndex || selected.ColumnIndex == columnFilesRightIndex)
                 {
                     if (selected.Tag != null)
                     {
@@ -335,11 +354,12 @@ namespace FileMatch
 
                                 //method 2
                                 if (bmp != null) bmp.Dispose();
-                                bmp = new Bitmap(fileName);
+                                bmp = (Bitmap)FromFile(fileName);
 
                                 RotateImageFromExifData(bmp);
 
                                 pictureBox1.Image = bmp;
+                                //bmp.Dispose();
                                 PictureLoadComplete(sender);
                             }
                             else
@@ -348,10 +368,25 @@ namespace FileMatch
                                 pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
                             }
                         }
+                        else
+                        {
+                            pictureBox1.Image = pictureBox1.ErrorImage;
+                            pictureBox1.SizeMode = PictureBoxSizeMode.CenterImage;
+                        }
                     }
                 }
 
             }
+        }
+
+        public static Image FromFile(string path)
+        {
+            //https://stackoverflow.com/questions/4803935/free-file-locked-by-new-bitmapfilepath
+
+            var bytes = File.ReadAllBytes(path);
+            var ms = new MemoryStream(bytes);
+            var img = Image.FromStream(ms);
+            return img;
         }
 
         private void RotateImageFromExifData(Bitmap image)
@@ -429,6 +464,12 @@ namespace FileMatch
 
         private void PictureResize()
         {
+            if (pictureBox1.Image == null)
+            {
+                Debug.WriteLine("PictureResize: Image is null");
+                return;
+            }
+
             if (pictureBox1.Image != null)
             {
                 if (PictureFits(pictureBox1.Image, pictureBox1.Width, pictureBox1.Height))
@@ -574,7 +615,11 @@ namespace FileMatch
         float currentZoom = 1f;
         private void PictureZoom(float zoom, bool useMousePosition = false)
         {
-            if (pictureBox1.Image == null) return;
+            if (pictureBox1.Image == null)
+            {
+                Debug.WriteLine("PictureZoom: Image is null");
+                return;
+            }
 
             UpdatePictureFocusPoint();
             Vector2 pictureBoxSize = new Vector2(
@@ -590,8 +635,6 @@ namespace FileMatch
             Point mousePos = panelForPicture.PointToClient(Cursor.Position);
             Vector2 mouseOffset = new Vector2(mousePos.X, mousePos.Y) - panelHalf;
             if (!useMousePosition) mouseOffset = Vector2.Zero;
-            //test
-            this.Text = "p: " + panelHalf.X + "/" + panelHalf.Y + "   m: " + mouseOffset.X + " / " + mouseOffset.Y;
 
             Vector2 pictureBoxLocation = -pictureBoxHalf + panelHalf + (pictureFocusPoint * pictureBoxSize) - mouseOffset;
 
@@ -640,6 +683,14 @@ namespace FileMatch
 
         private void PictureZoomFit()
         {
+            if (pictureBox1.Image == null)
+            {
+                Debug.WriteLine("PictureZoomFit: Image is null");
+                return;
+            }
+            //Debug.WriteLine("image w:" + pictureBox1.Image.);
+
+
             float zoomFitX = (float)panelForPicture.Width / (float)pictureBox1.Image.Width;
             float zoomFitY = (float)panelForPicture.Height / (float)pictureBox1.Image.Height;
 
